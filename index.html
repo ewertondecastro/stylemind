@@ -21,6 +21,51 @@
   --font:'Georgia',serif;--sans:-apple-system,'Helvetica Neue',sans-serif;
   --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)
 }
+/* NAGILA THEME */
+body.nagila-theme{
+  --bg:#FAF7F4;--s1:#FFFFFF;--s2:#F5F0EC;--s3:#EDE6E0;
+  --border:rgba(180,120,100,0.12);--border2:rgba(180,120,100,0.22);
+  --text:#3D2B1F;--text2:#8B6E62;--text3:#B09890;
+  --gold:#E8734A;--gold2:#C85A32;--gold-dim:rgba(232,115,74,0.10);--gold-dim2:rgba(232,115,74,0.18);
+  --red:#C05050;--green:#5A9E7A;
+}
+body.nagila-theme #topbar{background:var(--bg);border-bottom:0.5px solid var(--border)}
+body.nagila-theme #navgrid{background:var(--bg)}
+body.nagila-theme .logo em{color:var(--gold)}
+body.nagila-theme .upill.on{background:var(--gold);border-color:var(--gold);color:#fff}
+body.nagila-theme .navbtn.on{background:rgba(232,115,74,0.12);border-color:var(--gold)}
+body.nagila-theme .navbtn.on .navbtn-icon{background:var(--gold)}
+body.nagila-theme .navbtn.on .navbtn-icon svg{fill:#fff}
+body.nagila-theme .navbtn.on .navbtn-lbl{color:var(--gold)}
+body.nagila-theme .cta{background:var(--gold);color:#fff}
+body.nagila-theme .add-btn{background:var(--gold);color:#fff}
+body.nagila-theme .tog.on{border-color:var(--gold);background:rgba(232,115,74,0.10);color:var(--gold)}
+body.nagila-theme .ai-card{border-left-color:var(--gold);background:#fff}
+body.nagila-theme .ai-lbl{color:var(--gold)}
+body.nagila-theme .w-cat{color:var(--gold)}
+body.nagila-theme .lbl{color:#B09890}
+body.nagila-theme .profile-avatar{background:rgba(232,115,74,0.12);border-color:var(--gold);color:var(--gold)}
+body.nagila-theme .profile-season{color:var(--gold)}
+body.nagila-theme .pstat-val{color:var(--gold)}
+body.nagila-theme .pdot{border-color:rgba(180,120,100,0.2)}
+body.nagila-theme .weather-note{color:var(--gold)}
+body.nagila-theme .w-freq{background:rgba(250,247,244,0.9);color:var(--text2)}
+body.nagila-theme .w-freq.never{background:rgba(192,80,80,0.75);color:#fff}
+body.nagila-theme .gap-priority.gap-high{color:var(--red)}
+body.nagila-theme .gap-priority.gap-med{color:var(--gold)}
+body.nagila-theme .saved-name{color:var(--text)}
+body.nagila-theme .appr-from{color:var(--gold)}
+body.nagila-theme .sheet{background:#fff;border-top:0.5px solid var(--border)}
+body.nagila-theme .cat-b.on{border-color:var(--gold);background:rgba(232,115,74,0.08)}
+body.nagila-theme .cat-b.on .cat-b-icon{background:var(--gold)}
+body.nagila-theme .cat-b.on .cat-b-label{color:var(--gold)}
+body.nagila-theme .google-btn{background:#FAF7F4}
+body.nagila-theme .appr-btn.approve{background:var(--green)}
+body.nagila-theme textarea.field:focus,body.nagila-theme input.field:focus{border-color:var(--gold)}
+body.nagila-theme .score-num{color:var(--gold)}
+body.nagila-theme .sel-btn.primary{background:var(--gold);border-color:var(--gold)}
+body.nagila-theme .cta.sec{border-color:var(--border2);color:var(--text2)}
+body.nagila-theme .nav-badge{background:var(--gold)}
 html,body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden;height:100%;width:100%}
 #shell{height:100vh;width:100%;max-width:430px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden}
 
@@ -398,9 +443,18 @@ textarea.field,input.field{font-size:17px !important;padding:18px !important;lin
         <button class="tog" onclick="selF('Smart',this)">Smart</button>
         <button class="tog" onclick="selF('Formal',this)">Formal</button>
       </div>
+      <div class="lbl">Modo especial</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
+        <button class="tog" id="event-tog" onclick="toggleEvent(this)">Evento especial</button>
+        <input type="text" class="field" id="event-name" placeholder="Casamento, formatura..." style="display:none;font-size:15px;padding:14px">
+      </div>
       <button class="cta" id="gen-btn" onclick="genOutfit()">Gerar look</button>
       <div class="loader" id="oload" style="display:none"><div class="dots"><span></span><span></span><span></span></div>Montando o look ideal...</div>
       <div id="ores"></div>
+      <div id="banned-section" style="margin-top:20px;display:none">
+        <div class="lbl">Combinações proibidas</div>
+        <div id="banned-list"></div>
+      </div>
     </div>
 
     <!-- WARDROBE -->
@@ -443,6 +497,8 @@ textarea.field,input.field{font-size:17px !important;padding:18px !important;lin
         <button class="tog" onclick="showTool('calendar',this)">Calendário</button>
         <button class="tog" onclick="showTool('gaps',this)">Lacunas</button>
         <button class="tog" onclick="showTool('travel',this)">Viagem</button>
+        <button class="tog" onclick="showTool('apprhistory',this)">Aprovações</button>
+        <button class="tog" onclick="showTool('report',this)">Relatório</button>
       </div>
 
       <div id="tool-review">
@@ -488,6 +544,20 @@ textarea.field,input.field{font-size:17px !important;padding:18px !important;lin
         <button class="cta" id="gaps-btn" onclick="analyzeGaps()" style="margin-top:0">Analisar meu guarda-roupa</button>
         <div class="loader" id="gload" style="display:none"><div class="dots"><span></span><span></span><span></span></div>Analisando...</div>
         <div id="gres"></div>
+      </div>
+
+      <div id="tool-apprhistory" style="display:none">
+        <div class="sec-head">Histórico de aprovações</div>
+        <div class="sec-sub" id="apprh-sub">O que foi aprovado e o que gerou ajuste.</div>
+        <div id="apprh-list"></div>
+      </div>
+
+      <div id="tool-report" style="display:none">
+        <div class="sec-head">Relatório mensal</div>
+        <div class="sec-sub">Resumo do seu guarda-roupa e hábitos.</div>
+        <button class="cta" onclick="genReport()" style="margin-top:0" id="report-btn">Gerar relatório</button>
+        <div class="loader" id="rept-load" style="display:none"><div class="dots"><span></span><span></span><span></span></div>Analisando...</div>
+        <div id="report-res"></div>
       </div>
 
       <div id="tool-travel" style="display:none">
@@ -576,20 +646,7 @@ textarea.field,input.field{font-size:17px !important;padding:18px !important;lin
     <div class="handle"></div>
     <div class="sheet-title">Nova peça</div>
     <div class="sheet-sub">Categoria → foto → salvar</div>
-    <div class="cat-grid">
-      <button class="cat-b" onclick="selC('Camisa',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M20.5 7.27L12 2 3.5 7.27V10h1v10h15V10h1V7.27z"/></svg></div><div class="cat-b-label">Camisa</div></button>
-      <button class="cat-b" onclick="selC('Camiseta',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M16 4l4 4-2 2v10H6V10L4 8l4-4 2 2h4l2-2z"/></svg></div><div class="cat-b-label">Camiseta</div></button>
-      <button class="cat-b" onclick="selC('Blazer',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M12 2L8 6H4v2l2 2v10h4v-4h4v4h4V10l2-2V6h-4L12 2z"/></svg></div><div class="cat-b-label">Blazer</div></button>
-      <button class="cat-b" onclick="selC('Calça',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M6 2l-2 8h3l1 12h4l1-6 1 6h4l1-12h3L20 2H6z"/></svg></div><div class="cat-b-label">Calça</div></button>
-      <button class="cat-b" onclick="selC('Bermuda',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M6 2l-2 7h3l.5 6h5l.5-4 .5 4h5l.5-6h3L20 2H6z"/></svg></div><div class="cat-b-label">Bermuda</div></button>
-      <button class="cat-b" onclick="selC('Sapato',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M2 18v-2l1-1 2-8h10l3 6 4 1v4H2z"/></svg></div><div class="cat-b-label">Sapato</div></button>
-      <button class="cat-b" onclick="selC('Tênis',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M3 14s-1 0-1 1v3h20v-3c0-1-1-1-1-1l-5-1-2-4H8l-1 3-4 2z"/></svg></div><div class="cat-b-label">Tênis</div></button>
-      <button class="cat-b" onclick="selC('Bota',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M8 2v12H5v4a2 2 0 002 2h10a2 2 0 002-2v-4h-3l-2-6V2H8z"/></svg></div><div class="cat-b-label">Bota</div></button>
-      <button class="cat-b" onclick="selC('Acessório',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></div><div class="cat-b-label">Acessório</div></button>
-      <button class="cat-b" onclick="selC('Relógio',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 3M9 2h6M9 22h6"/></svg></div><div class="cat-b-label">Relógio</div></button>
-      <button class="cat-b" onclick="selC('Perfume',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M9 2h6v3h2a1 1 0 011 1v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6a1 1 0 011-1h2V2z"/></svg></div><div class="cat-b-label">Perfume</div></button>
-      <button class="cat-b" onclick="selC('Outro',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/></svg></div><div class="cat-b-label">Outro</div></button>
-    </div>
+    <div id="cat-grid-wrap"></div>
     <div id="mupload" style="display:none">
       <div class="div"></div>
       <div class="upload-zone" id="mzone">
@@ -602,8 +659,25 @@ textarea.field,input.field{font-size:17px !important;padding:18px !important;lin
       <div id="mname-area" style="display:none">
         <div class="lbl">Nome (edite se quiser)</div>
         <input type="text" class="field" id="iname" placeholder="Ex: Camisa Oxford creme">
-        <div id="idesc" style="font-size:12px;color:var(--text3);margin-top:7px;line-height:1.6"></div>
-        <button class="cta" onclick="saveItem()">Salvar no guarda-roupa</button>
+        <div id="idesc" style="font-size:12px;color:var(--text3);margin-top:7px;line-height:1.6;margin-bottom:12px"></div>
+        <div class="lbl" style="margin-top:12px">Custo <span id="cur-toggle" onclick="toggleCur()" style="color:var(--gold);cursor:pointer;font-weight:600;border:0.5px solid var(--gold);padding:2px 8px;border-radius:20px;margin-left:6px;font-size:10px">USD</span></div>
+        <input type="number" class="field" id="icost" placeholder="0.00" style="font-size:17px;padding:15px">
+        <div class="lbl" style="margin-top:14px">Condição</div>
+        <div class="row3" id="cond-btns">
+          <button class="tog" onclick="selCond('Ótima',this)">Ótima</button>
+          <button class="tog" onclick="selCond('Desgastada',this)">Desgastada</button>
+          <button class="tog" onclick="selCond('Lavar',this)">Lavar</button>
+          <button class="tog" onclick="selCond('Consertar',this)">Consertar</button>
+          <button class="tog" onclick="selCond('Guardada',this)">Guardada</button>
+          <button class="tog on" onclick="selCond('Ótima',this)" style="display:none" id="cond-default"></button>
+        </div>
+        <div class="lbl" style="margin-top:14px">Formalidade mínima</div>
+        <div class="row3" id="form-btns">
+          <button class="tog" onclick="selFormMin('Casual',this)">Casual</button>
+          <button class="tog" onclick="selFormMin('Smart',this)">Smart</button>
+          <button class="tog" onclick="selFormMin('Formal',this)">Formal</button>
+        </div>
+        <button class="cta" onclick="saveItem()" style="margin-top:18px">Salvar no guarda-roupa</button>
         <button class="cta sec" onclick="closeOverlay('modal-wrap')">Cancelar</button>
       </div>
     </div>
@@ -692,6 +766,12 @@ let pendingLook=null;
 let oCtx=null,selTime=null,selFormal=null;
 let tClima=null,tDias=null,tActs=[];
 let iPhoto=null,iB64=null,rB64=null,addCat=null;
+let itemCond='Ótima',itemFormMin='Casual',itemCost=0;
+let curMode='USD';
+let eventMode=false;
+let feedback=JSON.parse(localStorage.getItem('sm_feedback')||'[]');
+let bannedCombos=JSON.parse(localStorage.getItem('sm_banned')||'[]');
+const USD_BRL=5.0;
 
 const W=()=>wardrobes[cu];
 const H=()=>histories[cu];
@@ -737,6 +817,12 @@ function switchUser(u){
   cu=u;
   document.querySelectorAll('.upill').forEach(p=>p.classList.remove('on'));
   document.getElementById('pill-'+u).classList.add('on');
+  // Apply theme
+  if(u==='nagila'){
+    document.body.classList.add('nagila-theme');
+  } else {
+    document.body.classList.remove('nagila-theme');
+  }
   cancelSel();
   renderW();renderProfile();renderApprovals();updateApprBadge();
 }
@@ -753,13 +839,15 @@ function go(s,btn){
 }
 
 function showTool(name,btn){
-  ['review','saved','shopping','calendar','gaps','travel'].forEach(t=>{document.getElementById('tool-'+t).style.display='none'});
+  ['review','saved','shopping','calendar','gaps','travel','apprhistory','report'].forEach(t=>{const el=document.getElementById('tool-'+t);if(el)el.style.display='none'});
   document.querySelectorAll('.tool-tabs .tog').forEach(b=>b.classList.remove('on'));
   document.getElementById('tool-'+name).style.display='block';
   if(btn)btn.classList.add('on');
   if(name==='saved')renderSavedLooks();
   if(name==='shopping')renderShoppingList();
   if(name==='calendar')renderCalendar();
+  if(name==='apprhistory')renderApprHistory();
+  if(name==='report'){document.getElementById('report-res').innerHTML=''}
 }
 
 /* WARDROBE */
@@ -808,6 +896,7 @@ function delItem(i){if(confirm('Remover esta peça?')){W().splice(i,1);saveW();r
 /* ADD ITEM */
 function openModal(){
   addCat=null;iPhoto=null;iB64=null;
+  renderCatGrid();
   document.querySelectorAll('.cat-b').forEach(b=>b.classList.remove('on'));
   document.getElementById('mupload').style.display='none';
   document.getElementById('mprev').style.display='none';
@@ -857,7 +946,11 @@ async function analyzeItem(){
 async function saveItem(){
   const n=document.getElementById('iname').value.trim();
   if(!n||!iPhoto||!addCat)return;
-  const item={name:n,cat:addCat,photo:iPhoto,desc:document.getElementById('idesc').textContent,id:Date.now()};
+  const costRaw=parseFloat(document.getElementById('icost').value)||0;
+  const costUSD=curMode==='BRL'?(costRaw/USD_BRL):costRaw;
+  const item={name:n,cat:addCat,photo:iPhoto,desc:document.getElementById('idesc').textContent,
+    cost:costUSD,costDisplay:costRaw,costCur:curMode,
+    condition:itemCond||'Ótima',formalMin:itemFormMin||'Casual',id:Date.now()};
   W().push(item);saveW();
   closeOverlay('modal-wrap');renderW();
   if(driveTokens[cu])await uploadPhotoToDrive(item);
@@ -1052,7 +1145,7 @@ async function genOutfit(){
     h+=`<p style="margin-bottom:12px">${r.justificativa||''}</p>`;
     if(r.alerta)h+=`<p style="font-size:12px;color:var(--red);margin-bottom:10px;padding:9px;background:rgba(192,80,80,0.08);border-radius:8px">Atenção: ${r.alerta}</p>`;
     if(hasWardrobe){
-      const pieces=(r.pecas||[]).filter(p=>W()[p.id]);
+      const pieces=(r.pecas||[]).filter(p=>usableW[p.id]||W()[p.id]);
       if(pieces.length){h+='<div class="lookrow">';pieces.forEach(p=>{const it=W()[p.id];h+=`<div class="look-item"><img src="${it.photo}"><div class="look-item-info"><div class="look-item-name">${it.name}</div><div class="look-item-why">${p.motivo||''}</div></div></div>`;});h+='</div>';}
       pendingLook.thumbs=pieces.map(p=>W()[p.id].photo).slice(0,4);
       pieces.forEach(p=>{const item=W()[p.id];if(item){if(!usageCount[cu])usageCount[cu]={};usageCount[cu][item.id]=(usageCount[cu][item.id]||0)+1;}});
@@ -1074,6 +1167,8 @@ async function genOutfit(){
     if(r.alternativa)h+=`<div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Variação</div><p style="font-size:12px;color:var(--text2)">${r.alternativa}</p></div>`;
     if(r.nota)h+=`<div style="font-size:12px;color:var(--text3);margin-top:10px;font-style:italic;line-height:1.6">${r.nota}</div>`;
     h+='</div>';
+    _thumbTitle=r.titulo||'Look';_thumbOcc=occ||oCtx||'';
+    h+=renderThumbsHTML();
     h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">`;
     h+=`<button class="cta" style="margin-top:0" onclick="openSaveLook()">Salvar look</button>`;
     h+=`<button class="cta sec" style="margin-top:0" onclick="openSendAppr()">Pedir aprovação</button>`;
@@ -1299,7 +1394,16 @@ async function genTravel(){
   if(!dest||!tDias){document.getElementById('t-dest').focus();return}
   if(W().length<4){document.getElementById('tres').innerHTML='<div class="ai-card"><div class="ai-lbl">StyleMind</div>Adicione pelo menos 4 peças.</div>';return}
   document.getElementById('tload').style.display='flex';document.getElementById('tres').innerHTML='';document.getElementById('travel-btn').disabled=true;
-  const wl=W().map((i,idx)=>`ID:${idx}|${i.cat}:${i.name}`).join('\n');const nd=tDias==='2-3'?3:tDias==='4-6'?5:7;
+  // Filter out pieces in bad condition
+  const usableW=W().filter(i=>i.condition!=='Lavar'&&i.condition!=='Consertar');
+  const wl=usableW.map((i,idx)=>`ID:${idx}|${i.cat}:${i.name}${i.formalMin?'|min:'+i.formalMin:''}${i.condition&&i.condition!=='Ótima'?'|cond:'+i.condition:''}`).join('\n');
+  // Feedback context
+  const positiveFeedback=feedback.filter(f=>f.user===cu&&f.type==='up').slice(-5).map(f=>f.lookTitle).join(', ');
+  const negativeFeedback=feedback.filter(f=>f.user===cu&&f.type==='down').slice(-5).map(f=>f.lookTitle).join(', ');
+  // Banned combos
+  const banned=bannedCombos.filter(b=>b.user===cu).map(b=>b.piece1+' + '+b.piece2).join('; ');
+  // Event mode
+  const eventName=eventMode?document.getElementById('event-name').value.trim():'';const nd=tDias==='2-3'?3:tDias==='4-6'?5:7;
   try{
     const res=await fetch(API,{method:'POST',headers:apiHdr(),body:JSON.stringify({model:MDL,max_tokens:1200,system:sys()+'\nPlaneje mala. JSON sem markdown: {"resumo":"1-2 frases","dias":[{"dia":1,"contexto":"","look":["peça"],"nota":"dica"}],"essenciais":["item"]}',messages:[{role:'user',content:`Destino: ${dest}\nClima: ${tClima||'ameno'}\nDias: ${nd}\nAtividades: ${tActs.join(', ')||'misto'}\n\nGuarda-roupa:\n${wl}`}]})});
     const d=await res.json();const t=d.content.filter(c=>c.type==='text').map(c=>c.text).join('');
@@ -1417,6 +1521,254 @@ function doImport(e){
       alert('Importado com sucesso.');renderW();renderProfile();
     }catch{alert('Arquivo inválido.')}
   };reader.readAsText(f);
+}
+
+
+
+/* CURRENCY */
+function toggleCur(){
+  curMode=curMode==='USD'?'BRL':'USD';
+  document.getElementById('cur-toggle').textContent=curMode;
+}
+
+/* CONDITION & FORMALITY MIN */
+function selCond(c,el){
+  itemCond=c;
+  document.querySelectorAll('#cond-btns .tog').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+function selFormMin(f,el){
+  itemFormMin=f;
+  document.querySelectorAll('#form-btns .tog').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+}
+
+/* EVENT MODE */
+function toggleEvent(el){
+  eventMode=!eventMode;
+  el.classList.toggle('on',eventMode);
+  const inp=document.getElementById('event-name');
+  inp.style.display=eventMode?'block':'none';
+  if(eventMode)inp.focus();
+}
+
+/* THUMBS FEEDBACK */
+function addFeedback(type,lookTitle,occasion){
+  feedback.push({type,lookTitle,occasion,user:cu,ts:Date.now(),date:new Date().toLocaleDateString('pt-BR')});
+  if(feedback.length>200)feedback=feedback.slice(-200);
+  localStorage.setItem('sm_feedback',JSON.stringify(feedback));
+}
+
+function renderThumbsHTML(){
+  return '<div style="display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border)"><span style="font-size:12px;color:var(--text3);flex:1">Este look foi util?</span>'
+    +'<button onclick="doThumbUp()" style="background:var(--s2);border:0.5px solid var(--border2);border-radius:8px;padding:8px 16px;font-size:20px;cursor:pointer">&#128077;</button>'
+    +'<button onclick="doThumbDown()" style="background:var(--s2);border:0.5px solid var(--border2);border-radius:8px;padding:8px 16px;font-size:20px;cursor:pointer">&#128078;</button>'
+    +'</div>';
+}
+
+var _thumbTitle="",_thumbOcc="";
+function doThumbUp(){
+  addFeedback("up",_thumbTitle,_thumbOcc);
+  var el=document.querySelector('[onclick="doThumbUp()"]');
+  if(el&&el.parentElement)el.parentElement.innerHTML='<div style="font-size:14px;color:var(--text3);padding:10px 0">&#128077; Otimo! Vou lembrar disso.</div>';
+}
+function doThumbDown(){
+  addFeedback("down",_thumbTitle,_thumbOcc);
+  var el=document.querySelector('[onclick="doThumbDown()"]');
+  if(el&&el.parentElement)el.parentElement.innerHTML='<div style="font-size:14px;color:var(--text3);padding:10px 0">&#128078; Entendido. Ajustarei as proximas sugestoes.</div>';
+}
+
+/* BANNED COMBOS */
+function saveBanned(){localStorage.setItem('sm_banned',JSON.stringify(bannedCombos))}
+
+function addBannedCombo(piece1,piece2){
+  bannedCombos.push({piece1,piece2,user:cu,id:Date.now()});
+  saveBanned();
+  renderBannedList();
+}
+
+function removeBanned(id){
+  bannedCombos=bannedCombos.filter(b=>b.id!==id);
+  saveBanned();
+  renderBannedList();
+}
+
+function renderBannedList(){
+  const mine=bannedCombos.filter(b=>b.user===cu);
+  const sec=document.getElementById('banned-section');
+  const list=document.getElementById('banned-list');
+  if(!sec||!list)return;
+  if(!mine.length){sec.style.display='none';return}
+  sec.style.display='block';
+  list.innerHTML=mine.map(b=>`<div class="saved-card" style="display:flex;align-items:center;gap:10px;padding:12px">
+    <div style="flex:1;font-size:14px;color:var(--text)">\${b.piece1} + \${b.piece2}</div>
+    <button class="icon-btn" onclick="removeBanned(\${b.id})">Remover</button>
+  </div>`).join('');
+}
+
+/* APPROVAL HISTORY */
+function renderApprHistory(){
+  const localKey='sm_drive_appr_'+cu;
+  const list=JSON.parse(localStorage.getItem(localKey)||'[]');
+  const answered=list.filter(a=>a.answered);
+  const sub=document.getElementById('apprh-sub');
+  const container=document.getElementById('apprh-list');
+  if(!container)return;
+  const other=cu==='ewerton'?'nagila':'ewerton';
+  const otherName=profiles[other]?.name||other;
+  if(sub)sub.textContent=`O que \${otherName} aprovou e o que sugeriu ajuste.`;
+  if(!answered.length){
+    container.innerHTML='<div class="empty-box" style="padding:30px 0"><div class="empty-t">Nenhuma aprovação ainda</div><div class="empty-s">Envie um look para aprovação primeiro.</div></div>';
+    return;
+  }
+  // Group patterns
+  const approved=answered.filter(a=>a.approved).length;
+  const adjusted=answered.filter(a=>!a.approved).length;
+  var statsHtml='<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">'
+    +'<div style="background:rgba(106,158,106,0.1);border:0.5px solid var(--green);border-radius:var(--rs);padding:16px;text-align:center"><div style="font-size:28px;font-weight:700;color:var(--green)">'+approved+'</div><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Aprovados</div></div>'
+    +'<div style="background:rgba(196,144,64,0.1);border:0.5px solid var(--gold);border-radius:var(--rs);padding:16px;text-align:center"><div style="font-size:28px;font-weight:700;color:var(--gold)">'+adjusted+'</div><div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Ajustes</div></div>'
+    +'</div>';
+  var cardsHtml=answered.map(function(a){
+    var bg=a.approved?'rgba(106,158,106,0.15)':'rgba(196,144,64,0.15)';
+    var col=a.approved?'var(--green)':'var(--gold)';
+    var lbl=a.approved?'Aprovado':'Ajuste';
+    return '<div class="saved-card" style="margin-bottom:10px">'
+      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+      +'<div class="saved-name">'+(a.look_name||'')+'</div>'
+      +'<div style="font-size:12px;padding:4px 10px;border-radius:20px;background:'+bg+';color:'+col+'">'+lbl+'</div>'
+      +'</div>'
+      +'<div style="font-size:13px;color:var(--text3)">'+(a.occasion||'')+'</div>'
+      +(a.msg?'<div style="font-size:13px;color:var(--text2);margin-top:6px;font-style:italic">'+a.msg+'</div>':'')
+      +'</div>';
+  }).join('');
+  container.innerHTML=statsHtml+cardsHtml;
+}
+
+/* MONTHLY REPORT */
+async function genReport(){
+  document.getElementById('rept-load').style.display='flex';
+  document.getElementById('report-res').innerHTML='';
+  document.getElementById('report-btn').disabled=true;
+  const uc=usageCount[cu]||{};
+  const totalPieces=W().length;
+  const totalCost=W().reduce((s,i)=>s+(parseFloat(i.cost)||0),0);
+  const usedPieces=W().filter(i=>(uc[i.id]||0)>0).length;
+  const neverUsed=W().filter(i=>(uc[i.id]||0)===0).length;
+  const topPieces=W().sort((a,b)=>(uc[b.id]||0)-(uc[a.id]||0)).slice(0,3).map(i=>i.name);
+  const totalLooks=H().length;
+  const apprList=JSON.parse(localStorage.getItem('sm_drive_appr_'+cu)||'[]');
+  const approved=apprList.filter(a=>a.answered&&a.approved).length;
+  const thumbsUp=feedback.filter(f=>f.user===cu&&f.type==='up').length;
+  const thumbsDown=feedback.filter(f=>f.user===cu&&f.type==='down').length;
+  const shopDone=shoppingList.filter(i=>i.user===cu&&i.done).length;
+  try{
+    var reportSys=sys()+'\nGere um relatorio mensal de guarda-roupa. Seja direto, analitico e util. JSON sem markdown: {"titulo":"titulo criativo","resumo":"2-3 frases de diagnostico","destaques":["insight 1","insight 2","insight 3"],"alerta":"maior problema identificado","proximos_passos":["acao 1","acao 2"]}';
+    var reportMsg='Dados do guarda-roupa de '+P().name+':\nTotal de pecas: '+totalPieces+'\nCusto total estimado: USD '+totalCost.toFixed(2)+'\nPecas usadas: '+usedPieces+'\nPecas nunca usadas: '+neverUsed+'\nLooks gerados: '+totalLooks+'\nLooks aprovados: '+approved+'\nThumbs up: '+thumbsUp+'\nThumbs down: '+thumbsDown+'\nPecas mais usadas: '+(topPieces.join(', ')||'nenhuma')+'\nCompras concluidas: '+shopDone;
+    const res=await fetch(API,{method:'POST',headers:apiHdr(),body:JSON.stringify({model:MDL,max_tokens:800,
+      system:reportSys,
+      messages:[{role:'user',content:reportMsg}]})});
+    const d=await res.json();
+    const t=d.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    const r=JSON.parse(t.replace(/```json|```/g,'').trim());
+    let h=`<div class="ai-card"><div class="ai-lbl">Relatório — \${r.titulo||'Mensal'}</div><p style="margin-bottom:14px">\${r.resumo||''}</p>`;
+    if(r.destaques&&r.destaques.length){
+      h+='<div style="margin-bottom:12px"><div style="font-size:11px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Destaques</div>';
+      r.destaques.forEach(d=>{h+=`<div class="list-row">\${d}</div>`});
+      h+='</div>';
+    }
+    if(r.alerta)h+=`<div style="font-size:14px;color:var(--red);padding:12px;background:rgba(192,80,80,0.08);border-radius:8px;margin-bottom:12px">⚠ \${r.alerta}</div>`;
+    if(r.proximos_passos&&r.proximos_passos.length){
+      h+='<div><div style="font-size:11px;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Próximos passos</div>';
+      r.proximos_passos.forEach(p=>{h+=`<div class="list-row">\${p}</div>`});
+      h+='</div>';
+    }
+    // Cost breakdown
+    h+=`<div style="margin-top:14px;padding-top:14px;border-top:0.5px solid var(--border)">
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--gold)">USD \${totalCost.toFixed(0)}</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Investido</div></div>
+        <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:var(--gold)">\${totalLooks}</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Looks</div></div>
+        <div style="text-align:center"><div style="font-size:18px;font-weight:700;color:\${neverUsed>5?'var(--red)':'var(--green)'}">\${neverUsed}</div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1px">Sem uso</div></div>
+      </div>
+    </div>`;
+    h+='</div>';
+    document.getElementById('report-res').innerHTML=h;
+  }catch{document.getElementById('report-res').innerHTML='<div class="ai-card"><div class="ai-lbl">Erro</div>Falha. Tente novamente.</div>'}
+  document.getElementById('rept-load').style.display='none';
+  document.getElementById('report-btn').disabled=false;
+}
+
+/* CATEGORY GRID */
+const CATS_MASC = [
+  {n:'Camisa',i:'<path d="M20.5 7.27L12 2 3.5 7.27V10h1v10h15V10h1V7.27z"/>'},
+  {n:'Camiseta',i:'<path d="M16 4l4 4-2 2v10H6V10L4 8l4-4 2 2h4l2-2z"/>'},
+  {n:'Blazer',i:'<path d="M12 2L8 6H4v2l2 2v10h4v-4h4v4h4V10l2-2V6h-4L12 2z"/>'},
+  {n:'Calça',i:'<path d="M6 2l-2 8h3l1 12h4l1-6 1 6h4l1-12h3L20 2H6z"/>'},
+  {n:'Bermuda',i:'<path d="M6 2l-2 7h3l.5 6h5l.5-4 .5 4h5l.5-6h3L20 2H6z"/>'},
+  {n:'Regata',i:'<path d="M7 2l-4 5h3v13h12V7h3L17 2H7z"/>'},
+  {n:'Sapato',i:'<path d="M2 18v-2l1-1 2-8h10l3 6 4 1v4H2z"/>'},
+  {n:'Tênis',i:'<path d="M3 14s-1 0-1 1v3h20v-3c0-1-1-1-1-1l-5-1-2-4H8l-1 3-4 2z"/>'},
+  {n:'Bota',i:'<path d="M8 2v12H5v4a2 2 0 002 2h10a2 2 0 002-2v-4h-3l-2-6V2H8z"/>'},
+  {n:'Cinto',i:'<path d="M2 11h20v2H2zm8 0V9h4v2"/>'},
+  {n:'Óculos',i:'<path d="M2 12h4m12 0h4M6 12a4 4 0 008 0 4 4 0 008 0" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  {n:'Chapéu',i:'<path d="M4 18h16M6 18c0-4 2-8 6-10 4 2 6 6 6 10M9 8h6"/>'},
+  {n:'Relógio',i:'<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8v4l3 3M9 2h6M9 22h6" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  {n:'Perfume',i:'<path d="M9 2h6v3h2a1 1 0 011 1v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6a1 1 0 011-1h2V2z"/>'},
+  {n:'Mochila',i:'<path d="M8 2h8a2 2 0 012 2v16a2 2 0 01-2 2H8a2 2 0 01-2-2V4a2 2 0 012-2zM8 8h8M8 13h8"/>'},
+  {n:'Pijama',i:'<path d="M7 2h10v8l2 12H5L7 10V2zM9 2v6m6-6v6"/>'},
+  {n:'Meia',i:'<path d="M8 2v10l-4 6a2 2 0 002 2h8a2 2 0 002-2l-2-6V2H8z"/>'},
+  {n:'Outro',i:'<circle cx="12" cy="12" r="2"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/>'},
+];
+
+const CATS_FEM = [
+  {n:'Blusa',i:'<path d="M16 4l4 4-2 2v10H6V10L4 8l4-4 2 2h4l2-2z"/>'},
+  {n:'Cropped',i:'<path d="M16 4l4 4-2 2v6H6V10L4 8l4-4 2 2h4l2-2z"/>'},
+  {n:'Body',i:'<path d="M8 2h8l2 4v6c0 2-2 3-4 3h-4c-2 0-4-1-4-3V6L8 2zM9 15v5m6-5v5"/>'},
+  {n:'Regata',i:'<path d="M7 2l-4 5h3v13h12V7h3L17 2H7z"/>'},
+  {n:'Camiseta',i:'<path d="M16 4l4 4-2 2v10H6V10L4 8l4-4 2 2h4l2-2z"/>'},
+  {n:'Vestido',i:'<path d="M8 2h8l2 6-4 2v10H10V10L6 8 8 2z"/>'},
+  {n:'Saia',i:'<path d="M6 8h12l2 12H4L6 8zM8 8V4h8v4"/>'},
+  {n:'Calça',i:'<path d="M6 2l-2 8h3l1 12h4l1-6 1 6h4l1-12h3L20 2H6z"/>'},
+  {n:'Legging',i:'<path d="M7 2h10l1 10-3 10h-2l-1-8-1 8H9L6 12 7 2z"/>'},
+  {n:'Jumpsuit',i:'<path d="M8 2h8l1 8-3 2v8H10v-8L7 10 8 2z"/>'},
+  {n:'Conjunto',i:'<path d="M6 2h12v6H6V2zM5 10h14l2 12H3L5 10z"/>'},
+  {n:'Kimono',i:'<path d="M12 2L6 6v14h12V6l-6-4zM6 6l6 4 6-4"/>'},
+  {n:'Casaco',i:'<path d="M12 2L8 6H4v2l2 2v10h4v-4h4v4h4V10l2-2V6h-4L12 2z"/>'},
+  {n:'Cardigã',i:'<path d="M7 2l-3 4v14h6v-8h4v8h6V6L17 2l-5 4-5-4z"/>'},
+  {n:'Scarpin',i:'<path d="M3 18l3-8h10l2 4-4 2-2 2H3z"/>'},
+  {n:'Sandália',i:'<path d="M3 16h18v2H3zM6 16l1-6h10l1 6M9 10V7m6 3V7"/>'},
+  {n:'Sapatilha',i:'<path d="M2 16h20v2H2zM4 16c0-4 4-6 8-6s8 2 8 6"/>'},
+  {n:'Mule',i:'<path d="M2 16h20v2H2zM4 16c0-3 3-5 8-5s10 1 10 5M4 11V8"/>'},
+  {n:'Anabela',i:'<path d="M3 18l2-6h12l2 3-3 3H3zM14 12l2-6"/>'},
+  {n:'Bota',i:'<path d="M8 2v12H5v4a2 2 0 002 2h10a2 2 0 002-2v-4h-3l-2-6V2H8z"/>'},
+  {n:'Tênis',i:'<path d="M3 14s-1 0-1 1v3h20v-3c0-1-1-1-1-1l-5-1-2-4H8l-1 3-4 2z"/>'},
+  {n:'Bolsa',i:'<path d="M6 8h12l1 12H5L6 8zM9 8V6a3 3 0 016 0v2"/>'},
+  {n:'Clutch',i:'<rect x="3" y="9" width="18" height="10" rx="2"/><path d="M8 9V7a4 4 0 018 0v2"/>'},
+  {n:'Mochila',i:'<path d="M8 2h8a2 2 0 012 2v16a2 2 0 01-2 2H8a2 2 0 01-2-2V4a2 2 0 012-2zM8 8h8M8 13h8"/>'},
+  {n:'Brinco',i:'<circle cx="8" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 8v8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="16" cy="6" r="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 8v8" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  {n:'Colar',i:'<path d="M5 8a9 9 0 0014 0M12 17a2 2 0 100-4 2 2 0 000 4z" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  {n:'Pulseira',i:'<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 12h8" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  {n:'Anel',i:'<circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2"/>'},
+  {n:'Cinto',i:'<path d="M2 11h20v2H2zm8 0V9h4v2"/>'},
+  {n:'Óculos',i:'<path d="M2 12h4m12 0h4M6 12a4 4 0 008 0 4 4 0 008 0" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  {n:'Chapéu',i:'<path d="M4 18h16M6 18c0-4 2-8 6-10 4 2 6 6 6 10M9 8h6"/>'},
+  {n:'Lenço',i:'<path d="M4 4l16 8-16 8V4z"/>'},
+  {n:'Sutiã',i:'<path d="M4 10c0 4 3 6 8 6s8-2 8-6M4 10c2-4 4-6 8-6M20 10c-2-4-4-6-8-6" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  {n:'Top esport.',i:'<path d="M7 2l-3 5h4v8h8V7h4L17 2l-5 3-5-3z"/>'},
+  {n:'Legg. esport.',i:'<path d="M7 2h10l1 8-3 2v10H9V12L6 10 7 2z"/>'},
+  {n:'Biquíni',i:'<path d="M6 6h12M6 6c0 3 2 5 6 5s6-2 6-5M6 14h12M6 14c0 3 2 5 6 5s6-2 6-5" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  {n:'Meia-calça',i:'<path d="M8 2v10l-2 4a2 2 0 002 2h3l1-4 1 4h3a2 2 0 002-2l-2-4V2H8z"/>'},
+  {n:'Pijama',i:'<path d="M7 2h10v8l2 12H5L7 10V2zM9 2v6m6-6v6"/>'},
+  {n:'Loungewear',i:'<path d="M6 2h12v10l2 10H4L6 12V2zM9 2v8m6-8v8"/>'},
+  {n:'Relógio',i:'<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8v4l3 3M9 2h6M9 22h6" fill="none" stroke="currentColor" stroke-width="2"/>'},
+  {n:'Perfume',i:'<path d="M9 2h6v3h2a1 1 0 011 1v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6a1 1 0 011-1h2V2z"/>'},
+  {n:'Outro',i:'<circle cx="12" cy="12" r="2"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/>'},
+];
+
+function renderCatGrid(){
+  const wrap=document.getElementById('cat-grid-wrap');
+  if(!wrap)return;
+  const cats=cu==='nagila'?CATS_FEM:CATS_MASC;
+  wrap.innerHTML='<div class="cat-grid">'+cats.map(c=>`<button class="cat-b" onclick="selC('${c.n}',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24">${c.i}</svg></div><div class="cat-b-label">${c.n}</div></button>`).join('')+'</div>';
 }
 
 /* API KEY */
