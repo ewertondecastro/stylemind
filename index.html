@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="StyleMind">
 <meta name="theme-color" content="#0C0A08">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230C0A08'/><text y='.9em' font-size='60' x='50' text-anchor='middle' dy='0.1em' fill='%23C49040' font-family='Georgia'>S</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxODAgMTgwIiB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCI+CiAgPHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSI0MCIgZmlsbD0iIzBDMEEwOCIvPgogIDxyZWN0IHg9IjgiIHk9IjgiIHdpZHRoPSIxNjQiIGhlaWdodD0iMTY0IiByeD0iMzQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0M0OTA0MCIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1vcGFjaXR5PSIwLjMiLz4KICA8cGF0aCBkPSJNOTAgNDIgQzkwIDQyIDkwIDM4IDk0IDM2IEMxMDAgMzMgMTA3IDM3IDEwNyA0NCBDMTA3IDUwIDEwMSA1MyA5MCA2MCBMNTAgODQgQzQ0IDg3IDQyIDkxIDQyIDk2IEM0MiAxMDQgNDkgMTEwIDU3IDExMCBMMTIzIDExMCBDMTMxIDExMCAxMzggMTA0IDEzOCA5NiBDMTM4IDkxIDEzNiA4NyAxMzAgODQgTDkwIDYwIiBmaWxsPSJub25lIiBzdHJva2U9IiNDNDkwNDAiIHN0cm9rZS13aWR0aD0iNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+CiAgPHRleHQgeD0iOTAiIHk9IjEzOCIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsc2VyaWYiIGZvbnQtc2l6ZT0iMjIiIGZpbGw9IiNDNDkwNDAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGxldHRlci1zcGFjaW5nPSI0Ij5TTTwvdGV4dD4KICA8bGluZSB4MT0iNTIiIHkxPSIxNDgiIHgyPSIxMjgiIHkyPSIxNDgiIHN0cm9rZT0iI0M0OTA0MCIgc3Ryb2tlLXdpZHRoPSIwLjgiIHN0cm9rZS1vcGFjaXR5PSIwLjQiLz4KPC9zdmc+">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 :root{
@@ -925,34 +925,59 @@ function selF(f,el){selFormal=f;document.querySelectorAll('[onclick^="selF"]').f
 async function genOutfit(){
   const occ=document.getElementById('occ').value.trim();
   if(!occ&&!oCtx){document.getElementById('occ').focus();return}
-  if(W().length<3){document.getElementById('ores').innerHTML='<div class="ai-card"><div class="ai-lbl">StyleMind</div>Adicione pelo menos 3 peças.</div>';return}
   document.getElementById('oload').style.display='flex';
   document.getElementById('ores').innerHTML='';
   document.getElementById('gen-btn').disabled=true;
-  const wl=W().map((i,idx)=>`ID:${idx}|${i.cat}:${i.name}`).join('\n');
+  const hasWardrobe=W().length>=3;
+  const wl=hasWardrobe?W().map((i,idx)=>`ID:${idx}|${i.cat}:${i.name}`).join('\n'):'';
   const ll=H().slice(-5).map(h=>`${h.date}: ${h.occasion} → ${h.title}`).join('\n');
   try{
-    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MDL,max_tokens:900,system:sys()+'\nMonte look com APENAS peças do guarda-roupa. Considere clima informado. Evite repetir últimos 5 looks. JSON sem markdown: {"titulo":"2-3 palavras elegantes","justificativa":"por que funciona (2-3 frases)","pecas":[{"id":0,"motivo":"1 frase"}],"alerta":"se houver problema — senão omita","alternativa":"1 variação concreta"}',messages:[{role:'user',content:`Contexto: ${oCtx||''}\nOcasião: ${occ||oCtx}\nHorário: ${selTime||'?'}\nFormalidade: ${selFormal||'?'}\n\nGuarda-roupa:\n${wl}\n\nÚltimos looks:\n${ll||'nenhum'}`}]})});
+    let sysExtra,userMsg,maxTok;
+    if(hasWardrobe){
+      sysExtra='\nMonte look com APENAS peças do guarda-roupa. Considere clima. Evite repetir últimos 5 looks. JSON sem markdown: {"titulo":"2-3 palavras elegantes","justificativa":"por que funciona (2-3 frases)","pecas":[{"id":0,"motivo":"1 frase"}],"alerta":"se houver problema — senão omita","alternativa":"1 variação concreta"}';
+      userMsg=`Contexto: ${oCtx||''}\nOcasião: ${occ||oCtx}\nHorário: ${selTime||'?'}\nFormalidade: ${selFormal||'?'}\n\nGuarda-roupa:\n${wl}\n\nÚltimos looks:\n${ll||'nenhum'}`;
+      maxTok=900;
+    }else{
+      sysExtra='\nNão há guarda-roupa cadastrado. Sugira um look completo baseado no perfil, paleta e estilo da pessoa. Para cada peça, indique também onde comprar (loja acessível nos EUA). JSON sem markdown: {"titulo":"2-3 palavras elegantes","justificativa":"por que este look funciona para a ocasião e para o perfil (2-3 frases)","pecas":[{"categoria":"ex: Camisa","descricao":"descrição exata: cor, material, estilo, caimento","motivo":"por que esta peça","onde_comprar":"loja nos EUA + faixa de preço em USD"}],"alerta":"se houver algo a evitar — senão omita","alternativa":"1 variação completa com onde comprar","nota":"orientação final sobre estilo ou caimento"}';
+      userMsg=`Contexto: ${oCtx||''}\nOcasião: ${occ||oCtx}\nHorário: ${selTime||'?'}\nFormalidade: ${selFormal||'?'}\n\nGuarda-roupa: vazio — sugira peças ideais para comprar.`;
+      maxTok=1200;
+    }
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MDL,max_tokens:maxTok,system:sys()+sysExtra,messages:[{role:'user',content:userMsg}]})});
     const d=await res.json();
     const t=d.content.filter(c=>c.type==='text').map(c=>c.text).join('');
     const r=JSON.parse(t.replace(/```json|```/g,'').trim());
-    const pieces=(r.pecas||[]).filter(p=>W()[p.id]);
-    pendingLook={title:r.titulo,occasion:(occ||oCtx||''),thumbs:pieces.map(p=>W()[p.id].photo).slice(0,4)};
-    let h=`<div class="ai-card"><div class="ai-lbl">StyleMind — ${r.titulo||'Look'}</div><p style="margin-bottom:12px">${r.justificativa||''}</p>`;
+    pendingLook={title:r.titulo,occasion:(occ||oCtx||''),thumbs:[]};
+    let h=`<div class="ai-card"><div class="ai-lbl">StyleMind — ${r.titulo||'Look'}</div>`;
+    if(!hasWardrobe)h+=`<div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;padding:6px 10px;background:var(--s2);border-radius:6px">Sugestão baseada no seu perfil — sem roupas cadastradas</div>`;
+    h+=`<p style="margin-bottom:12px">${r.justificativa||''}</p>`;
     if(r.alerta)h+=`<p style="font-size:12px;color:var(--red);margin-bottom:10px;padding:9px;background:rgba(192,80,80,0.08);border-radius:8px">Atenção: ${r.alerta}</p>`;
-    if(pieces.length){h+='<div class="lookrow">';pieces.forEach(p=>{const it=W()[p.id];h+=`<div class="look-item"><img src="${it.photo}"><div class="look-item-info"><div class="look-item-name">${it.name}</div><div class="look-item-why">${p.motivo||''}</div></div></div>`;});h+='</div>';}
+    if(hasWardrobe){
+      const pieces=(r.pecas||[]).filter(p=>W()[p.id]);
+      if(pieces.length){h+='<div class="lookrow">';pieces.forEach(p=>{const it=W()[p.id];h+=`<div class="look-item"><img src="${it.photo}"><div class="look-item-info"><div class="look-item-name">${it.name}</div><div class="look-item-why">${p.motivo||''}</div></div></div>`;});h+='</div>';}
+      pendingLook.thumbs=pieces.map(p=>W()[p.id].photo).slice(0,4);
+      pieces.forEach(p=>{const item=W()[p.id];if(item){if(!usageCount[cu])usageCount[cu]={};usageCount[cu][item.id]=(usageCount[cu][item.id]||0)+1;}});
+      saveUC();
+    }else{
+      if(r.pecas&&r.pecas.length){
+        h+='<div style="margin-top:12px">';
+        r.pecas.forEach(p=>{
+          h+=`<div style="background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);padding:12px;margin-bottom:8px">
+            <div style="font-size:10px;color:var(--gold);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">${p.categoria||''}</div>
+            <div style="font-size:14px;color:var(--text);font-weight:500;margin-bottom:3px">${p.descricao||''}</div>
+            <div style="font-size:12px;color:var(--text3);margin-bottom:6px">${p.motivo||''}</div>
+            ${p.onde_comprar?`<div style="font-size:12px;color:var(--green);padding:5px 8px;background:rgba(106,158,106,0.1);border-radius:6px">Onde comprar: ${p.onde_comprar}</div>`:''}
+          </div>`;
+        });
+        h+='</div>';
+      }
+    }
     if(r.alternativa)h+=`<div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Variação</div><p style="font-size:12px;color:var(--text2)">${r.alternativa}</p></div>`;
+    if(r.nota)h+=`<div style="font-size:12px;color:var(--text3);margin-top:10px;font-style:italic;line-height:1.6">${r.nota}</div>`;
     h+='</div>';
     h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">`;
     h+=`<button class="cta" style="margin-top:0" onclick="openSaveLook()">Salvar look</button>`;
-    const other=cu==='ewerton'?'nagila':'ewerton';
     h+=`<button class="cta sec" style="margin-top:0" onclick="openSendAppr()">Pedir aprovação</button>`;
     h+=`</div>`;
-    pieces.forEach(p=>{
-      const item=W()[p.id];
-      if(item){if(!usageCount[cu])usageCount[cu]={};usageCount[cu][item.id]=(usageCount[cu][item.id]||0)+1;}
-    });
-    saveUC();
     document.getElementById('ores').innerHTML=h;
   }catch{document.getElementById('ores').innerHTML='<div class="ai-card"><div class="ai-lbl">Erro</div>Falha. Tente novamente.</div>'}
   document.getElementById('oload').style.display='none';
