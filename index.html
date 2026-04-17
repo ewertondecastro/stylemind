@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>StyleMind</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="StyleMind">
+<meta name="theme-color" content="#0C0A08">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%230C0A08'/><text y='.9em' font-size='60' x='50' text-anchor='middle' dy='0.1em' fill='%23C49040' font-family='Georgia'>S</text></svg>">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0C0A08;--s1:#151210;--s2:#1E1A17;--s3:#28231F;
+  --border:rgba(255,245,235,0.07);--border2:rgba(255,245,235,0.13);
+  --text:#F4EDE4;--text2:#9A9088;--text3:#5A5248;
+  --gold:#C49040;--gold2:#A07030;--gold-dim:rgba(196,144,64,0.10);--gold-dim2:rgba(196,144,64,0.20);
+  --red:#C05050;--green:#6A9E6A;
+  --r:16px;--rs:12px;
+  --font:'Georgia',serif;--sans:-apple-system,'Helvetica Neue',sans-serif;
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)
+}
+html,body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow:hidden;height:100%;width:100%}
+#shell{height:100vh;width:100%;max-width:430px;margin:0 auto;display:flex;flex-direction:column;overflow:hidden}
+
+/* TOP BAR */
+#topbar{padding-top:max(var(--sat),48px);padding-left:20px;padding-right:20px;background:var(--bg);flex-shrink:0;z-index:20}
+.tb-inner{display:flex;align-items:center;justify-content:space-between;padding-bottom:14px;border-bottom:0.5px solid var(--border)}
+.logo{font-family:var(--font);font-size:22px;letter-spacing:-0.5px;color:var(--text)}
+.logo em{color:var(--gold);font-style:normal}
+.user-row{display:flex;gap:7px}
+.upill{padding:7px 15px;border-radius:100px;font-size:13px;font-family:var(--sans);border:0.5px solid var(--border2);background:transparent;color:var(--text3);cursor:pointer;transition:all 0.2s}
+.upill.on{background:var(--gold);border-color:var(--gold);color:#0C0A08;font-weight:600}
+
+/* NAV */
+#navgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:10px 20px 8px;background:var(--bg);flex-shrink:0}
+.navbtn{background:var(--s2);border:0.5px solid var(--border2);border-radius:var(--rs);padding:11px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;transition:all 0.2s;position:relative}
+.navbtn:active{transform:scale(0.96)}
+.navbtn.on{background:var(--gold-dim2);border-color:var(--gold)}
+.navbtn-icon{width:26px;height:26px;border-radius:6px;background:var(--s3);display:flex;align-items:center;justify-content:center}
+.navbtn.on .navbtn-icon{background:var(--gold)}
+.navbtn-icon svg{width:13px;height:13px;fill:var(--text3)}
+.navbtn.on .navbtn-icon svg{fill:#0C0A08}
+.navbtn-lbl{font-size:9px;color:var(--text3);letter-spacing:0.2px;font-family:var(--sans);text-align:center;line-height:1.2}
+.navbtn.on .navbtn-lbl{color:var(--gold);font-weight:500}
+.nav-badge{position:absolute;top:5px;right:5px;min-width:15px;height:15px;background:var(--red);border-radius:8px;font-size:9px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 3px}
+
+/* SCROLL */
+#scroll{flex:1;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#scroll::-webkit-scrollbar{display:none}
+.screen{display:none;padding:18px 20px;padding-bottom:calc(var(--sab) + 50px)}
+.screen.on{display:block}
+
+/* TYPOGRAPHY */
+.lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;margin-top:20px}
+.lbl:first-child{margin-top:0}
+.sec-head{font-family:var(--font);font-size:20px;color:var(--text);margin-bottom:4px}
+.sec-sub{font-size:13px;color:var(--text3);margin-bottom:16px;line-height:1.6}
+
+/* INPUTS */
+textarea.field,input.field{width:100%;background:var(--s1);border:0.5px solid var(--border2);border-radius:var(--rs);padding:15px;color:var(--text);font-size:15px;font-family:var(--sans);outline:none;transition:border-color 0.2s;-webkit-appearance:none}
+textarea.field{resize:none;min-height:70px}
+textarea.field::placeholder,input.field::placeholder{color:var(--text3)}
+textarea.field:focus,input.field:focus{border-color:var(--gold)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* BUTTONS */
+.cta{width:100%;padding:17px;background:var(--gold);border:none;border-radius:var(--rs);color:#0C0A08;font-size:15px;font-weight:700;font-family:var(--sans);cursor:pointer;margin-top:14px;transition:opacity 0.15s;display:block}
+.cta:active{opacity:0.8}
+.cta:disabled{opacity:0.3;cursor:not-allowed}
+.cta.sec{background:transparent;border:0.5px solid var(--border2);color:var(--text2);font-weight:400;margin-top:10px}
+.cta.green{background:var(--green);color:#fff}
+.cta.sm{padding:13px;font-size:13px;margin-top:10px}
+.add-strip{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.add-btn{padding:17px;background:var(--gold);border:none;border-radius:var(--rs);color:#0C0A08;font-size:14px;font-weight:700;font-family:var(--sans);cursor:pointer;transition:opacity 0.15s}
+.add-btn:active{opacity:0.8}
+.add-btn.sec{background:var(--s2);color:var(--text2);border:0.5px solid var(--border2);font-weight:400}
+
+/* TOGGLES */
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tog{background:var(--s1);border:0.5px solid var(--border);border-radius:var(--rs);padding:13px 4px;font-size:13px;color:var(--text2);cursor:pointer;text-align:center;font-family:var(--sans);transition:all 0.15s;line-height:1.3}
+.tog.on{border-color:var(--gold);background:var(--gold-dim2);color:var(--gold)}
+.tog:active{transform:scale(0.96)}
+
+/* WEATHER */
+.weather-bar{display:flex;align-items:center;gap:10px;background:var(--s2);border-radius:var(--rs);padding:10px 14px;margin-bottom:16px;border:0.5px solid var(--border)}
+.weather-temp{font-size:16px;font-weight:600;color:var(--text)}
+.weather-desc{font-size:12px;color:var(--text3)}
+.weather-note{font-size:11px;color:var(--gold);margin-top:1px}
+
+/* WARDROBE */
+.w-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.w-card{background:var(--s1);border:0.5px solid var(--border);border-radius:var(--rs);overflow:hidden;position:relative;cursor:pointer;transition:border-color 0.2s}
+.w-card.selected{border-color:var(--gold);border-width:2px}
+.w-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+.w-info{padding:10px}
+.w-name{font-size:13px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.w-cat{font-size:10px;color:var(--gold);letter-spacing:1px;text-transform:uppercase}
+.w-del{position:absolute;top:7px;right:7px;width:26px;height:26px;background:rgba(12,10,8,0.82);border-radius:50%;border:none;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.w-freq{position:absolute;top:7px;left:7px;padding:3px 7px;border-radius:100px;font-size:10px;font-weight:600;background:rgba(12,10,8,0.8);color:var(--text2)}
+.w-freq.never{background:rgba(192,80,80,0.85);color:#fff}
+.w-sel-check{position:absolute;top:7px;right:7px;width:26px;height:26px;border-radius:50%;background:var(--gold);display:none;align-items:center;justify-content:center}
+.w-card.selected .w-sel-check{display:flex}
+.sel-toolbar{display:flex;align-items:center;justify-content:space-between;padding:10px 0;margin-bottom:12px}
+.sel-count{font-size:13px;color:var(--gold)}
+.sel-actions{display:flex;gap:8px}
+.sel-btn{padding:8px 13px;background:var(--s2);border:0.5px solid var(--border2);border-radius:var(--rs);font-size:12px;color:var(--text2);cursor:pointer;font-family:var(--sans)}
+.sel-btn.primary{background:var(--gold);border-color:var(--gold);color:#0C0A08;font-weight:600}
+
+/* AI CARDS */
+.ai-card{background:var(--s1);border:0.5px solid var(--border);border-left:2px solid var(--gold);border-radius:var(--rs);padding:16px;margin-top:14px;font-size:14px;line-height:1.75;color:var(--text)}
+.ai-lbl{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.list-row{padding:6px 0;border-bottom:0.5px solid var(--border);font-size:13px;color:var(--text)}
+.list-row:last-child{border-bottom:none}
+.lookrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.look-item{flex:1;min-width:68px;max-width:98px;background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);overflow:hidden}
+.look-item img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.look-item-info{padding:6px}
+.look-item-name{font-size:10px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.look-item-why{font-size:9px;color:var(--gold);margin-top:2px;line-height:1.4}
+.score-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.score-num{font-size:32px;font-weight:700;font-family:var(--font)}
+
+/* UPLOAD */
+.upload-zone{border:1.5px dashed var(--border2);border-radius:var(--r);padding:38px 20px;text-align:center;position:relative;overflow:hidden;cursor:pointer;transition:border-color 0.2s;margin-bottom:14px}
+.upload-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.upload-zone:active{border-color:var(--gold)}
+.uz-t{font-family:var(--font);font-size:18px;color:var(--text);margin-bottom:6px}
+.uz-s{font-size:13px;color:var(--text3)}
+
+/* LOADER */
+.loader{display:flex;align-items:center;gap:10px;padding:16px 0;color:var(--text3);font-size:13px}
+.dots span{width:5px;height:5px;background:var(--gold);border-radius:50%;display:inline-block;animation:dp 1.2s infinite;margin-right:3px}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes dp{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+/* SAVED LOOKS */
+.saved-card{background:var(--s1);border:0.5px solid var(--border);border-radius:var(--rs);padding:13px;margin-bottom:10px}
+.saved-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.saved-name{font-family:var(--font);font-size:15px;color:var(--text)}
+.icon-btn{background:var(--s2);border:0.5px solid var(--border);border-radius:7px;padding:5px 10px;font-size:11px;color:var(--text3);cursor:pointer;font-family:var(--sans)}
+.icon-btn:active{border-color:var(--gold);color:var(--gold)}
+
+/* SHOPPING */
+.shop-item{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:0.5px solid var(--border)}
+.shop-item:last-child{border-bottom:none}
+.shop-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all 0.2s}
+.shop-check.done{background:var(--green);border-color:var(--green)}
+.shop-check.done::after{content:'';display:block;width:6px;height:10px;border:2px solid #fff;border-top:none;border-left:none;transform:rotate(45deg) translate(-1px,-2px)}
+.shop-name{font-size:13px;color:var(--text);margin-bottom:2px}
+.shop-name.done{text-decoration:line-through;color:var(--text3)}
+.shop-detail{font-size:11px;color:var(--text3);line-height:1.5}
+.shop-del{background:none;border:none;color:var(--text3);font-size:18px;cursor:pointer;padding:0 4px}
+
+/* CALENDAR */
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:16px}
+.day-col{text-align:center}
+.day-lbl{font-size:9px;color:var(--text3);margin-bottom:5px;letter-spacing:0.5px;text-transform:uppercase}
+.day-dot{width:30px;height:30px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3);cursor:pointer}
+.day-dot.has{background:var(--gold-dim2);border:0.5px solid var(--gold);color:var(--gold)}
+.day-dot.today{border:1.5px solid var(--text3)}
+
+/* APPROVAL */
+.appr-card{background:var(--s1);border:0.5px solid var(--border);border-radius:var(--rs);padding:14px;margin-bottom:12px}
+.appr-from{font-size:11px;color:var(--gold);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+.appr-look-name{font-family:var(--font);font-size:16px;color:var(--text);margin-bottom:4px}
+.appr-occasion{font-size:12px;color:var(--text3);margin-bottom:10px}
+.appr-thumbs{display:flex;gap:6px;margin-bottom:12px}
+.appr-thumb{width:48px;height:64px;border-radius:7px;object-fit:cover;border:0.5px solid var(--border)}
+.appr-msg{font-size:13px;color:var(--text2);margin-bottom:10px;font-style:italic;padding:8px;background:var(--s2);border-radius:7px}
+.appr-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.appr-btn{padding:12px;border-radius:var(--rs);font-size:13px;font-weight:600;font-family:var(--sans);cursor:pointer;border:none;transition:opacity 0.15s}
+.appr-btn:active{opacity:0.8}
+.appr-btn.approve{background:var(--green);color:#fff}
+.appr-btn.suggest{background:var(--s2);color:var(--text2);border:0.5px solid var(--border2);font-weight:400}
+.appr-answered{font-size:12px;color:var(--text3);font-style:italic;padding:8px 0}
+
+/* DRIVE STATUS */
+.drive-card{background:var(--s2);border:0.5px solid var(--border2);border-radius:var(--rs);padding:14px;margin-bottom:12px}
+.drive-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.drive-dot{width:8px;height:8px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.drive-dot.ok{background:var(--green)}
+.drive-dot.sync{background:var(--gold);animation:pd 1s infinite}
+@keyframes pd{0%,100%{opacity:1}50%{opacity:0.3}}
+.google-btn{width:100%;padding:13px;background:var(--s1);border:0.5px solid var(--border2);border-radius:var(--rs);color:var(--text);font-size:13px;font-family:var(--sans);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px}
+.google-btn:active{border-color:var(--gold)}
+.g-icon{width:17px;height:17px;flex-shrink:0}
+
+/* GAPS */
+.gap-card{background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);padding:12px;margin-bottom:10px}
+.gap-title{font-size:13px;color:var(--text);font-weight:500;margin-bottom:3px}
+.gap-desc{font-size:12px;color:var(--text3);line-height:1.5}
+.gap-high{color:var(--red)}.gap-med{color:var(--gold)}.gap-low{color:var(--text3)}
+
+/* TRAVEL */
+.travel-day{background:var(--s1);border:0.5px solid var(--border);border-radius:var(--rs);margin-bottom:10px;overflow:hidden}
+.travel-day-head{padding:9px 12px;background:var(--s2);border-bottom:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.travel-day-num{font-family:var(--font);font-size:13px;color:var(--gold)}
+.travel-day-ctx{font-size:11px;color:var(--text3)}
+.travel-day-body{padding:10px 12px}
+.travel-item{font-size:13px;color:var(--text);padding:4px 0;border-bottom:0.5px solid var(--border)}
+.travel-item:last-child{border-bottom:none}
+
+/* PROFILE */
+.profile-hero{background:var(--s1);border:0.5px solid var(--border);border-radius:var(--r);padding:20px;margin-bottom:18px;text-align:center}
+.profile-avatar{width:64px;height:64px;border-radius:50%;background:var(--gold-dim2);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-family:var(--font);font-size:22px;color:var(--gold)}
+.profile-name{font-family:var(--font);font-size:21px;color:var(--text);margin-bottom:2px}
+.profile-season{font-size:12px;color:var(--gold);margin-bottom:8px}
+.profile-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:14px}
+.pstat{background:var(--s2);border-radius:var(--rs);padding:8px;text-align:center}
+.pstat-val{font-size:16px;font-weight:700;color:var(--gold);margin-bottom:1px}
+.pstat-lbl{font-size:9px;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase}
+.palette-strip{display:flex;gap:5px;margin-top:12px;justify-content:center;flex-wrap:wrap}
+.pdot{width:20px;height:20px;border-radius:50%;border:0.5px solid var(--border2)}
+.info-block{background:var(--s1);border:0.5px solid var(--border);border-radius:var(--rs);padding:13px;font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:12px}
+
+/* TOOLS SUB */
+.tool-tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px}
+
+/* MODAL */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:50;display:none;align-items:flex-end;flex-direction:column;justify-content:flex-end}
+.overlay.on{display:flex}
+.sheet{background:var(--s1);border-radius:22px 22px 0 0;padding:20px;padding-bottom:calc(var(--sab) + 24px);width:100%;max-height:90vh;overflow-y:auto;border-top:0.5px solid var(--border2)}
+.handle{width:34px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 20px}
+.sheet-title{font-family:var(--font);font-size:19px;color:var(--text);margin-bottom:4px}
+.sheet-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.cat-b{background:var(--s2);border:0.5px solid var(--border);border-radius:var(--rs);padding:12px 5px;cursor:pointer;text-align:center;transition:all 0.15s}
+.cat-b:active{transform:scale(0.96)}
+.cat-b.on{border-color:var(--gold);background:var(--gold-dim2)}
+.cat-b-icon{width:23px;height:23px;background:var(--s3);border-radius:5px;margin:0 auto 5px;display:flex;align-items:center;justify-content:center}
+.cat-b.on .cat-b-icon{background:var(--gold)}
+.cat-b-icon svg{width:11px;height:11px;fill:var(--text3)}
+.cat-b.on .cat-b-icon svg{fill:#0C0A08}
+.cat-b-label{font-size:10px;color:var(--text2)}
+.cat-b.on .cat-b-label{color:var(--gold)}
+.aloader{display:flex;align-items:center;gap:10px;padding:12px 0;color:var(--text3);font-size:13px}
+.div{height:0.5px;background:var(--border);margin:16px 0}
+.empty-box{text-align:center;padding:40px 20px}
+.empty-t{font-family:var(--font);font-size:18px;color:var(--text3);margin-bottom:8px}
+.empty-s{font-size:13px;color:var(--text3);line-height:1.6}
+</style>
+</head>
+<body>
+<div id="shell">
+  <div id="topbar">
+    <div class="tb-inner">
+      <div class="logo">Style<em>Mind</em></div>
+      <div class="user-row">
+        <button class="upill on" id="pill-ewerton" onclick="switchUser('ewerton')">Ewerton</button>
+        <button class="upill" id="pill-nagila" onclick="switchUser('nagila')">Nagila</button>
+      </div>
+    </div>
+  </div>
+  <div id="navgrid">
+    <button class="navbtn on" onclick="go('outfit',this)">
+      <div class="navbtn-icon"><svg viewBox="0 0 24 24"><path d="M12 2l-4 4H4v2l2 2v10h12V10l2-2V6h-4L12 2z"/></svg></div>
+      <span class="navbtn-lbl">Montar</span>
+    </button>
+    <button class="navbtn" onclick="go('wardrobe',this)">
+      <div class="navbtn-icon"><svg viewBox="0 0 24 24"><path d="M20.5 7.27L12 2 3.5 7.27V10h1v10h15V10h1V7.27z"/></svg></div>
+      <span class="navbtn-lbl">Armário</span>
+    </button>
+    <button class="navbtn" onclick="go('approvals',this)" id="nav-approvals">
+      <div class="navbtn-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg></div>
+      <span class="navbtn-lbl">Aprovação</span>
+      <div class="nav-badge" id="appr-badge" style="display:none">0</div>
+    </button>
+    <button class="navbtn" onclick="go('tools',this)">
+      <div class="navbtn-icon"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.57 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></div>
+      <span class="navbtn-lbl">Mais</span>
+    </button>
+    <button class="navbtn" onclick="go('profile',this)">
+      <div class="navbtn-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+      <span class="navbtn-lbl">Perfil</span>
+    </button>
+  </div>
+
+  <div id="scroll">
+
+    <!-- OUTFIT (HOME) -->
+    <div class="screen on" id="sc-outfit">
+      <div id="weather-area"></div>
+      <div class="lbl">Contexto</div>
+      <div class="row3" style="margin-bottom:10px" id="ctx-btns">
+        <button class="tog" onclick="selCtx('Profissional',this)">Profissional</button>
+        <button class="tog" onclick="selCtx('Igreja',this)">Igreja</button>
+        <button class="tog" onclick="selCtx('Social',this)">Social</button>
+        <button class="tog" onclick="selCtx('Casual',this)">Casual</button>
+        <button class="tog" onclick="selCtx('Viagem',this)">Viagem</button>
+        <button class="tog" onclick="selCtx('Família',this)">Família</button>
+      </div>
+      <div class="lbl">Ocasião</div>
+      <textarea class="field" id="occ" placeholder="Reunião com cliente, culto, jantar, ensaio fotográfico..." rows="2"></textarea>
+      <div class="lbl">Horário</div>
+      <div class="row3">
+        <button class="tog" onclick="selT('Manhã',this)">Manhã</button>
+        <button class="tog" onclick="selT('Tarde',this)">Tarde</button>
+        <button class="tog" onclick="selT('Noite',this)">Noite</button>
+      </div>
+      <div class="lbl">Formalidade</div>
+      <div class="row3">
+        <button class="tog" onclick="selF('Casual',this)">Casual</button>
+        <button class="tog" onclick="selF('Smart',this)">Smart</button>
+        <button class="tog" onclick="selF('Formal',this)">Formal</button>
+      </div>
+      <button class="cta" id="gen-btn" onclick="genOutfit()">Gerar look</button>
+      <div class="loader" id="oload" style="display:none"><div class="dots"><span></span><span></span><span></span></div>Montando o look ideal...</div>
+      <div id="ores"></div>
+    </div>
+
+    <!-- WARDROBE -->
+    <div class="screen" id="sc-wardrobe">
+      <div class="add-strip">
+        <button class="add-btn" onclick="openModal()">Adicionar peça</button>
+        <button class="add-btn sec" onclick="toggleSel()">Selecionar</button>
+      </div>
+      <div class="sel-toolbar" id="sel-toolbar" style="display:none">
+        <span class="sel-count" id="sel-count">0 selecionadas</span>
+        <div class="sel-actions">
+          <button class="sel-btn primary" onclick="checkComb()">Combina?</button>
+          <button class="sel-btn" onclick="cancelSel()">Cancelar</button>
+        </div>
+      </div>
+      <div class="w-grid" id="wgrid"></div>
+      <div class="empty-box" id="wempty" style="display:none">
+        <div class="empty-t">Guarda-roupa vazio</div>
+        <div class="empty-s">Adicione suas primeiras peças.<br>A IA aprende com cada uma.</div>
+      </div>
+    </div>
+
+    <!-- APPROVALS -->
+    <div class="screen" id="sc-approvals">
+      <div class="sec-head">Aprovações</div>
+      <div class="sec-sub" id="appr-sub">Looks aguardando sua opinião.</div>
+      <div id="appr-list"></div>
+      <div class="empty-box" id="appr-empty" style="display:none">
+        <div class="empty-t">Nenhuma aprovação</div>
+        <div class="empty-s">Quando alguém enviar um look para você, aparece aqui.</div>
+      </div>
+    </div>
+
+    <!-- TOOLS -->
+    <div class="screen" id="sc-tools">
+      <div class="tool-tabs">
+        <button class="tog on" onclick="showTool('review',this)">Estou pronto</button>
+        <button class="tog" onclick="showTool('saved',this)">Looks salvos</button>
+        <button class="tog" onclick="showTool('shopping',this)">Compras</button>
+        <button class="tog" onclick="showTool('calendar',this)">Calendário</button>
+        <button class="tog" onclick="showTool('gaps',this)">Lacunas</button>
+        <button class="tog" onclick="showTool('travel',this)">Viagem</button>
+      </div>
+
+      <div id="tool-review">
+        <div class="upload-zone" id="rzone">
+          <input type="file" accept="image/*" capture="user" onchange="onRevPhoto(event)" id="rinput">
+          <div class="uz-t">Fotografar look atual</div>
+          <div class="uz-s">Frente, boa luz, corpo inteiro</div>
+        </div>
+        <div id="rpreview" style="display:none"></div>
+        <div id="rctx" style="display:none">
+          <div class="lbl">Para onde vai?</div>
+          <input type="text" class="field" id="rctx-input" placeholder="Reunião, culto, jantar...">
+          <button class="cta" onclick="doReview()">Avaliar meu look</button>
+        </div>
+        <div class="loader" id="rload" style="display:none"><div class="dots"><span></span><span></span><span></span></div>Analisando...</div>
+        <div id="rres"></div>
+      </div>
+
+      <div id="tool-saved" style="display:none">
+        <div class="sec-head">Looks salvos</div>
+        <div id="saved-list"></div>
+        <div id="saved-empty" class="empty-box" style="display:none;padding:24px 0"><div class="empty-t">Nenhum look salvo</div><div class="empty-s">Gere um look e salve com um nome.</div></div>
+      </div>
+
+      <div id="tool-shopping" style="display:none">
+        <div class="sec-head">Lista de compras</div>
+        <div id="shop-list"></div>
+        <div id="shop-empty" class="empty-box" style="display:none;padding:24px 0"><div class="empty-t">Lista vazia</div><div class="empty-s">Peças sugeridas pela IA aparecem aqui.</div></div>
+        <button class="cta sec sm" id="clear-shop-btn" onclick="clearDoneShop()" style="display:none">Remover compradas</button>
+      </div>
+
+      <div id="tool-calendar" style="display:none">
+        <div class="sec-head">Calendário de looks</div>
+        <div class="week-grid" id="week-grid"></div>
+        <div id="cal-detail"></div>
+        <div class="lbl">Histórico</div>
+        <div id="hist-list-cal"></div>
+      </div>
+
+      <div id="tool-gaps" style="display:none">
+        <div class="sec-head">Lacunas do guarda-roupa</div>
+        <div class="sec-sub">A IA analisa o que você tem e aponta o que falta.</div>
+        <button class="cta" id="gaps-btn" onclick="analyzeGaps()" style="margin-top:0">Analisar meu guarda-roupa</button>
+        <div class="loader" id="gload" style="display:none"><div class="dots"><span></span><span></span><span></span></div>Analisando...</div>
+        <div id="gres"></div>
+      </div>
+
+      <div id="tool-travel" style="display:none">
+        <div class="sec-head">Modo viagem</div>
+        <div class="sec-sub">Informe o destino e o app monta a mala exata.</div>
+        <div class="lbl">Destino</div>
+        <input type="text" class="field" id="t-dest" placeholder="New York, Miami, Brasil...">
+        <div class="lbl">Clima</div>
+        <div class="row3">
+          <button class="tog" onclick="selClima('Frio',this)">Frio</button>
+          <button class="tog" onclick="selClima('Ameno',this)">Ameno</button>
+          <button class="tog" onclick="selClima('Quente',this)">Quente</button>
+        </div>
+        <div class="lbl">Dias</div>
+        <div class="row3">
+          <button class="tog" onclick="selDias('2-3',this)">2–3 dias</button>
+          <button class="tog" onclick="selDias('4-6',this)">4–6 dias</button>
+          <button class="tog" onclick="selDias('7+',this)">7+ dias</button>
+        </div>
+        <div class="lbl">Atividades</div>
+        <div class="row3" style="margin-bottom:0">
+          <button class="tog" onclick="togAct('Negócios',this)">Negócios</button>
+          <button class="tog" onclick="togAct('Igreja',this)">Igreja</button>
+          <button class="tog" onclick="togAct('Turismo',this)">Turismo</button>
+          <button class="tog" onclick="togAct('Praia',this)">Praia</button>
+          <button class="tog" onclick="togAct('Jantares',this)">Jantares</button>
+          <button class="tog" onclick="togAct('Casual',this)">Casual</button>
+        </div>
+        <button class="cta" id="travel-btn" onclick="genTravel()">Montar mala</button>
+        <div class="loader" id="tload" style="display:none"><div class="dots"><span></span><span></span><span></span></div>Planejando...</div>
+        <div id="tres"></div>
+      </div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="screen" id="sc-profile">
+      <div id="profile-view"></div>
+      <button class="cta sm sec" onclick="openProfileEdit()">Editar perfil</button>
+      <div class="div"></div>
+      <div class="lbl">Análise de frequência</div>
+      <button class="cta sm sec" onclick="showFreq()">Ver peças menos usadas</button>
+      <div id="freq-result"></div>
+      <div class="div"></div>
+      <div class="lbl">Notificações push</div>
+      <button class="cta sm sec" id="notif-btn" onclick="requestNotif()">Ativar notificações</button>
+      <div class="div"></div>
+      <div class="lbl">Google Drive — sincronização</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:12px;line-height:1.6">Estrutura de pastas:<br>StyleMind/Ewerton/Roupas · StyleMind/Nagila/Roupas · StyleMind/Aprovações/Para Nagila · StyleMind/Aprovações/Para Ewerton</div>
+      <div class="drive-card">
+        <div class="drive-row"><div class="drive-dot" id="dd-ewerton"></div><div><div style="font-size:13px;color:var(--text);font-weight:500">Ewerton</div><div style="font-size:11px;color:var(--text3)" id="ds-ewerton">Não conectado</div></div></div>
+        <div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Client ID</div>
+        <input type="text" class="field" id="cid-ewerton" placeholder="Cole seu Google Client ID" style="font-size:12px;padding:11px">
+        <button class="google-btn" onclick="connectDrive('ewerton')">
+          <svg class="g-icon" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Conectar conta Ewerton
+        </button>
+      </div>
+      <div class="drive-card">
+        <div class="drive-row"><div class="drive-dot" id="dd-nagila"></div><div><div style="font-size:13px;color:var(--text);font-weight:500">Nagila</div><div style="font-size:11px;color:var(--text3)" id="ds-nagila">Não conectado</div></div></div>
+        <div style="font-size:10px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Client ID</div>
+        <input type="text" class="field" id="cid-nagila" placeholder="Cole seu Google Client ID" style="font-size:12px;padding:11px">
+        <button class="google-btn" onclick="connectDrive('nagila')">
+          <svg class="g-icon" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          Conectar conta Nagila
+        </button>
+      </div>
+      <div class="div"></div>
+      <div class="lbl">Backup local</div>
+      <button class="cta sec sm" onclick="exportData()">Exportar dados (JSON)</button>
+      <button class="cta sec sm" onclick="document.getElementById('import-input').click()">Importar dados</button>
+      <input type="file" id="import-input" accept=".json" style="display:none" onchange="doImport(event)">
+    </div>
+
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="modal-wrap">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title">Nova peça</div>
+    <div class="sheet-sub">Categoria → foto → salvar</div>
+    <div class="cat-grid">
+      <button class="cat-b" onclick="selC('Camisa',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M20.5 7.27L12 2 3.5 7.27V10h1v10h15V10h1V7.27z"/></svg></div><div class="cat-b-label">Camisa</div></button>
+      <button class="cat-b" onclick="selC('Camiseta',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M16 4l4 4-2 2v10H6V10L4 8l4-4 2 2h4l2-2z"/></svg></div><div class="cat-b-label">Camiseta</div></button>
+      <button class="cat-b" onclick="selC('Blazer',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M12 2L8 6H4v2l2 2v10h4v-4h4v4h4V10l2-2V6h-4L12 2z"/></svg></div><div class="cat-b-label">Blazer</div></button>
+      <button class="cat-b" onclick="selC('Calça',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M6 2l-2 8h3l1 12h4l1-6 1 6h4l1-12h3L20 2H6z"/></svg></div><div class="cat-b-label">Calça</div></button>
+      <button class="cat-b" onclick="selC('Bermuda',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M6 2l-2 7h3l.5 6h5l.5-4 .5 4h5l.5-6h3L20 2H6z"/></svg></div><div class="cat-b-label">Bermuda</div></button>
+      <button class="cat-b" onclick="selC('Sapato',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M2 18v-2l1-1 2-8h10l3 6 4 1v4H2z"/></svg></div><div class="cat-b-label">Sapato</div></button>
+      <button class="cat-b" onclick="selC('Tênis',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M3 14s-1 0-1 1v3h20v-3c0-1-1-1-1-1l-5-1-2-4H8l-1 3-4 2z"/></svg></div><div class="cat-b-label">Tênis</div></button>
+      <button class="cat-b" onclick="selC('Bota',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M8 2v12H5v4a2 2 0 002 2h10a2 2 0 002-2v-4h-3l-2-6V2H8z"/></svg></div><div class="cat-b-label">Bota</div></button>
+      <button class="cat-b" onclick="selC('Acessório',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg></div><div class="cat-b-label">Acessório</div></button>
+      <button class="cat-b" onclick="selC('Relógio',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 3M9 2h6M9 22h6"/></svg></div><div class="cat-b-label">Relógio</div></button>
+      <button class="cat-b" onclick="selC('Perfume',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><path d="M9 2h6v3h2a1 1 0 011 1v14a2 2 0 01-2 2H8a2 2 0 01-2-2V6a1 1 0 011-1h2V2z"/></svg></div><div class="cat-b-label">Perfume</div></button>
+      <button class="cat-b" onclick="selC('Outro',this)"><div class="cat-b-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><circle cx="4" cy="12" r="2"/><circle cx="20" cy="12" r="2"/></svg></div><div class="cat-b-label">Outro</div></button>
+    </div>
+    <div id="mupload" style="display:none">
+      <div class="div"></div>
+      <div class="upload-zone" id="mzone">
+        <input type="file" accept="image/*" onchange="onItemPhoto(event)" id="iphoto">
+        <div class="uz-t" id="mztitle">Fotografar peça</div>
+        <div class="uz-s">Fundo claro, luz natural</div>
+      </div>
+      <div id="mprev" style="display:none;margin-bottom:12px"><img id="mprevimg" style="width:100%;border-radius:var(--rs);max-height:200px;object-fit:cover"></div>
+      <div class="aloader" id="aload" style="display:none"><div class="dots"><span></span><span></span><span></span></div>Identificando a peça...</div>
+      <div id="mname-area" style="display:none">
+        <div class="lbl">Nome (edite se quiser)</div>
+        <input type="text" class="field" id="iname" placeholder="Ex: Camisa Oxford creme">
+        <div id="idesc" style="font-size:12px;color:var(--text3);margin-top:7px;line-height:1.6"></div>
+        <button class="cta" onclick="saveItem()">Salvar no guarda-roupa</button>
+        <button class="cta sec" onclick="closeOverlay('modal-wrap')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="save-look-wrap">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title">Salvar look</div>
+    <div class="sheet-sub">Nome para recuperar depois sem pedir à IA novamente</div>
+    <div class="lbl">Nome do look</div>
+    <input type="text" class="field" id="save-look-name" placeholder="Ex: Culto de domingo, Cliente Boston...">
+    <button class="cta" onclick="confirmSaveLook()">Salvar</button>
+    <button class="cta sec" onclick="closeOverlay('save-look-wrap')">Cancelar</button>
+  </div>
+</div>
+
+<div class="overlay" id="send-appr-wrap">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title" id="send-appr-title">Pedir aprovação</div>
+    <div class="sheet-sub" id="send-appr-sub">O look vai aparecer para aprovação</div>
+    <div id="send-appr-preview" style="margin-bottom:14px"></div>
+    <div class="lbl">Mensagem (opcional)</div>
+    <input type="text" class="field" id="send-appr-msg" placeholder="O que você acha desse look?">
+    <button class="cta" id="send-appr-btn" onclick="confirmSendApproval()">Enviar</button>
+    <button class="cta sec" onclick="closeOverlay('send-appr-wrap')">Cancelar</button>
+  </div>
+</div>
+
+<div class="overlay" id="profile-wrap">
+  <div class="sheet">
+    <div class="handle"></div>
+    <div class="sheet-title" id="pe-title">Editar perfil</div>
+    <div class="sheet-sub">A IA usa estas informações em todas as sugestões</div>
+    <div class="lbl">Nome</div><input type="text" class="field" id="pe-name">
+    <div class="lbl">Altura e peso</div>
+    <div class="field-row"><input type="text" class="field" id="pe-height" placeholder="Ex: 1,83m"><input type="text" class="field" id="pe-weight" placeholder="Ex: 145 lb"></div>
+    <div class="lbl">Paleta de cores</div><textarea class="field" id="pe-palette" rows="2"></textarea>
+    <div class="lbl">Estilo pessoal</div><textarea class="field" id="pe-style" rows="2"></textarea>
+    <div class="lbl">Contextos frequentes</div><textarea class="field" id="pe-contexts" rows="2"></textarea>
+    <div class="lbl">Objetivos de imagem</div><textarea class="field" id="pe-goals" rows="2"></textarea>
+    <div class="lbl">Observações para a IA</div><textarea class="field" id="pe-notes" rows="2"></textarea>
+    <button class="cta" onclick="saveProfile()">Salvar perfil</button>
+    <button class="cta sec" onclick="closeOverlay('profile-wrap')">Cancelar</button>
+  </div>
+</div>
+
+<script>
+const API='https://api.anthropic.com/v1/messages';
+const MDL='claude-sonnet-4-20250514';
+const WEATHER='https://api.open-meteo.com/v1/forecast?latitude=41.77&longitude=-70.51&current=temperature_2m,weathercode&temperature_unit=fahrenheit&timezone=America%2FNew_York';
+const DRIVE_API='https://www.googleapis.com/drive/v3';
+const DRIVE_UPLOAD='https://www.googleapis.com/upload/drive/v3';
+
+const DEF={
+  ewerton:{name:'Ewerton',initials:'ED',height:'1,83m',weight:'',
+    palette:'Dark Autumn — CORES: terracota, borgonha, verde oliva escuro, verde petróleo, caramelo, marrom chocolate, laranja queimado, amarelo mostarda, roxo escuro. NEUTROS: off-white quente, bege quente, camelo, marrom, preto esverdeado. EVITAR: branco frio, pastéis, tons frios, candy colors. METAIS: cobre, bronze, dourado fosco — nunca espelhado.',
+    style:'Elegante clássico contemporâneo. Caimento impecável. Qualidade > quantidade. Autoridade calma. Sofisticação discreta.',
+    contexts:'Profissional (CEO Fidelium Financial), Eclesiástico (pastor reformado), Social, Fotografia (Decastro Photography), Família, Viagens.',
+    goals:'Comunicar dignidade, coerência e bom gosto. Presença refinada. Elegância como respeito, nunca vaidade.',
+    notes:'1,83m, pele bronzeada subtom quente-dourado. Cape Cod MA. CEO, pastor, fotógrafo, pai.'},
+  nagila:{name:'Nagila',initials:'ND',height:'1,63m',weight:'145 lb',
+    palette:'Primavera Viva — CORES: coral, vermelho vibrante, rosa quente, turquesa, verde esmeralda, laranja brilhante, amarelo intenso, roxo brilhante. NEUTROS: off-white, creme, branco quente, preto com detalhes quentes. EVITAR: bege, pastéis opacos, tons frios. METAIS: dourado brilhante, ouro rosé, prata polida — BRILHANTE.',
+    style:'Elegante e jovem, vibrante e confiante. Alto contraste. Cores intensas realçam o brilho natural.',
+    contexts:'Igreja, eventos sociais, família, casual elegante, viagens.',
+    goals:'Elegância jovem e presença marcante. Brilho como expressão da personalidade.',
+    notes:'1,63m, 145 lb. Primavera Viva — subtom pêssego-dourado. Looks apagados a desbotam.'}
+};
+
+let cu='ewerton';
+let profiles=JSON.parse(localStorage.getItem('sm_profiles')||'null')||JSON.parse(JSON.stringify(DEF));
+let wardrobes={ewerton:JSON.parse(localStorage.getItem('sm_w_ewerton')||'[]'),nagila:JSON.parse(localStorage.getItem('sm_w_nagila')||'[]')};
+let histories={ewerton:JSON.parse(localStorage.getItem('sm_h_ewerton')||'[]'),nagila:JSON.parse(localStorage.getItem('sm_h_nagila')||'[]')};
+let savedLooks={ewerton:JSON.parse(localStorage.getItem('sm_sl_ewerton')||'[]'),nagila:JSON.parse(localStorage.getItem('sm_sl_nagila')||'[]')};
+let shoppingList=JSON.parse(localStorage.getItem('sm_shop')||'[]');
+let usageCount={ewerton:JSON.parse(localStorage.getItem('sm_uc_ewerton')||'{}'),nagila:JSON.parse(localStorage.getItem('sm_uc_nagila')||'{}')};
+let driveTokens={ewerton:localStorage.getItem('sm_dt_ewerton')||'',nagila:localStorage.getItem('sm_dt_nagila')||''};
+let driveFolders={};
+let weather=null;
+let selMode=false,selItems=[];
+let pendingLook=null;
+let oCtx=null,selTime=null,selFormal=null;
+let tClima=null,tDias=null,tActs=[];
+let iPhoto=null,iB64=null,rB64=null,addCat=null;
+
+const W=()=>wardrobes[cu];
+const H=()=>histories[cu];
+const P=()=>profiles[cu];
+const SL=()=>savedLooks[cu];
+
+function saveW(){localStorage.setItem('sm_w_'+cu,JSON.stringify(W()))}
+function saveH(){localStorage.setItem('sm_h_'+cu,JSON.stringify(H()))}
+function saveSL(){localStorage.setItem('sm_sl_'+cu,JSON.stringify(SL()))}
+function saveShop(){localStorage.setItem('sm_shop',JSON.stringify(shoppingList))}
+function saveProfiles(){localStorage.setItem('sm_profiles',JSON.stringify(profiles))}
+function saveUC(){localStorage.setItem('sm_uc_'+cu,JSON.stringify(usageCount[cu]))}
+
+function sys(){
+  const p=P();
+  const w=weather?`Clima atual Cape Cod: ${weather.temp}°F, ${weather.desc}. `:'';
+  return`${w}Consultor de imagem e personal stylist de ${p.name}.
+PERFIL: ${p.name} | ${p.height||''} | ${p.weight||''}
+PALETA: ${p.palette}
+ESTILO: ${p.style}
+CONTEXTOS: ${p.contexts}
+OBJETIVOS: ${p.goals}
+NOTAS: ${p.notes}
+PRINCÍPIOS: caimento>cor>marca. Qualidade>quantidade. Elegância discreta. Autoridade calma.
+TOM: direto, respeitoso, formador. Corrija escolhas, nunca a pessoa.`;
+}
+
+/* WEATHER */
+async function fetchWeather(){
+  try{
+    const r=await fetch(WEATHER);const d=await r.json();
+    const code=d.current.weathercode,temp=Math.round(d.current.temperature_2m);
+    const descs={0:'Céu limpo',1:'Quase limpo',2:'Parcialmente nublado',3:'Nublado',45:'Neblina',51:'Garoa',61:'Chuva leve',71:'Neve',80:'Chuva',95:'Trovoada'};
+    const icons={0:'☀',1:'🌤',2:'⛅',3:'☁',45:'🌫',51:'🌦',61:'🌧',71:'❄',80:'🌧',95:'⛈'};
+    weather={temp,desc:descs[code]||'Tempo variável',icon:icons[code]||'🌡'};
+    const note=temp<45?'Frio — priorize camadas e lã':temp>70?'Quente — roupas leves':'Ameno — camadas leves';
+    document.getElementById('weather-area').innerHTML=`<div class="weather-bar"><span style="font-size:20px">${weather.icon}</span><div><div class="weather-temp">${temp}°F — ${weather.desc}</div><div class="weather-desc">Cape Cod, MA</div><div class="weather-note">${note}</div></div></div>`;
+  }catch{weather=null}
+}
+
+/* NAVIGATION */
+function switchUser(u){
+  cu=u;
+  document.querySelectorAll('.upill').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pill-'+u).classList.add('on');
+  cancelSel();
+  renderW();renderProfile();renderApprovals();updateApprBadge();
+}
+
+function go(s,btn){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.navbtn').forEach(x=>x.classList.remove('on'));
+  document.getElementById('sc-'+s).classList.add('on');
+  btn.classList.add('on');
+  if(s==='wardrobe')renderW();
+  if(s==='profile')renderProfile();
+  if(s==='approvals'){renderApprovals();pollDriveApprovals();}
+  if(s==='tools')showTool('review',document.querySelector('.tool-tabs .tog'));
+}
+
+function showTool(name,btn){
+  ['review','saved','shopping','calendar','gaps','travel'].forEach(t=>{document.getElementById('tool-'+t).style.display='none'});
+  document.querySelectorAll('.tool-tabs .tog').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tool-'+name).style.display='block';
+  if(btn)btn.classList.add('on');
+  if(name==='saved')renderSavedLooks();
+  if(name==='shopping')renderShoppingList();
+  if(name==='calendar')renderCalendar();
+}
+
+/* WARDROBE */
+function renderW(){
+  const g=document.getElementById('wgrid'),e=document.getElementById('wempty');
+  if(!W().length){g.innerHTML='';e.style.display='block';return}
+  e.style.display='none';
+  const uc=usageCount[cu]||{};
+  g.innerHTML=W().map((item,ri)=>{
+    const uses=uc[item.id]||0;
+    const fl=uses===0?'Nunca':uses+'x',fc=uses===0?'never':'';
+    const check=selMode&&selItems.includes(ri)?`<div class="w-sel-check"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#0C0A08" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>`:'';
+    const del=selMode?'':`<button class="w-del" onclick="event.stopPropagation();delItem(${ri})">×</button>`;
+    return`<div class="w-card${selMode&&selItems.includes(ri)?' selected':''}" onclick="cardTap(${ri})">
+      <img src="${item.photo}" loading="lazy">
+      <div class="w-freq ${fc}">${fl}</div>${check}${del}
+      <div class="w-info"><div class="w-name">${item.name}</div><div class="w-cat">${item.cat}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function cardTap(ri){
+  if(!selMode)return;
+  const i=selItems.indexOf(ri);
+  if(i>=0)selItems.splice(i,1);else selItems.push(ri);
+  document.getElementById('sel-count').textContent=selItems.length+' selecionada'+(selItems.length!==1?'s':'');
+  renderW();
+}
+
+function toggleSel(){
+  selMode=!selMode;selItems=[];
+  document.getElementById('sel-toolbar').style.display=selMode?'flex':'none';
+  document.querySelector('.add-strip').style.display=selMode?'none':'grid';
+  renderW();
+}
+
+function cancelSel(){
+  selMode=false;selItems=[];
+  const tb=document.getElementById('sel-toolbar');if(tb)tb.style.display='none';
+  const as=document.querySelector('.add-strip');if(as)as.style.display='grid';
+  renderW();
+}
+
+function delItem(i){if(confirm('Remover esta peça?')){W().splice(i,1);saveW();renderW()}}
+
+/* ADD ITEM */
+function openModal(){
+  addCat=null;iPhoto=null;iB64=null;
+  document.querySelectorAll('.cat-b').forEach(b=>b.classList.remove('on'));
+  document.getElementById('mupload').style.display='none';
+  document.getElementById('mprev').style.display='none';
+  document.getElementById('mname-area').style.display='none';
+  document.getElementById('aload').style.display='none';
+  document.getElementById('mzone').style.display='block';
+  document.getElementById('iphoto').value='';
+  openOverlay('modal-wrap');
+}
+
+function selC(c,el){
+  addCat=c;document.querySelectorAll('.cat-b').forEach(b=>b.classList.remove('on'));el.classList.add('on');
+  document.getElementById('mupload').style.display='block';
+  document.getElementById('mztitle').textContent='Fotografar '+c.toLowerCase();
+}
+
+async function onItemPhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=async function(ev){
+    iPhoto=ev.target.result;iB64=ev.target.result.split(',')[1];
+    document.getElementById('mprevimg').src=iPhoto;
+    document.getElementById('mprev').style.display='block';
+    document.getElementById('mzone').style.display='none';
+    document.getElementById('aload').style.display='flex';
+    document.getElementById('mname-area').style.display='none';
+    await analyzeItem();
+  };reader.readAsDataURL(f);
+}
+
+async function analyzeItem(){
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MDL,max_tokens:300,system:sys()+'\nIdentifique a peça. JSON sem markdown: {"nome":"nome descritivo com cor e estilo","descricao":"1 frase: material, formalidade, harmonia com a paleta","paleta_ok":true/false}',messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:iB64}},{type:'text',text:'Categoria: '+addCat}]}]})});
+    const d=await res.json();
+    const t=d.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    const p=JSON.parse(t.replace(/```json|```/g,'').trim());
+    document.getElementById('iname').value=p.nome||'';
+    document.getElementById('idesc').textContent=(p.descricao||'')+(p.paleta_ok===false?' ⚠ Verificar harmonia.':'');
+  }catch{
+    document.getElementById('iname').value=addCat+' '+new Date().toLocaleDateString('pt-BR');
+    document.getElementById('idesc').textContent='Edite o nome acima.';
+  }
+  document.getElementById('aload').style.display='none';
+  document.getElementById('mname-area').style.display='block';
+}
+
+async function saveItem(){
+  const n=document.getElementById('iname').value.trim();
+  if(!n||!iPhoto||!addCat)return;
+  const item={name:n,cat:addCat,photo:iPhoto,desc:document.getElementById('idesc').textContent,id:Date.now()};
+  W().push(item);saveW();
+  closeOverlay('modal-wrap');renderW();
+  if(driveTokens[cu])await uploadPhotoToDrive(item);
+}
+
+/* DRIVE */
+async function getOrCreateFolder(name,parentId){
+  const token=driveTokens[cu];if(!token)return null;
+  const key=`${cu}_${name}_${parentId||'root'}`;
+  if(driveFolders[key])return driveFolders[key];
+  try{
+    const q=`name='${name}' and mimeType='application/vnd.google-apps.folder'${parentId?` and '${parentId}' in parents`:` and 'root' in parents`} and trashed=false`;
+    const sr=await fetch(`${DRIVE_API}/files?q=${encodeURIComponent(q)}&fields=files(id,name)`,{headers:{Authorization:'Bearer '+token}});
+    const sd=await sr.json();
+    if(sd.files&&sd.files.length>0){driveFolders[key]=sd.files[0].id;return sd.files[0].id;}
+    const cr=await fetch(`${DRIVE_API}/files`,{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({name,mimeType:'application/vnd.google-apps.folder',parents:parentId?[parentId]:[]})});
+    const cd=await cr.json();
+    driveFolders[key]=cd.id;return cd.id;
+  }catch{return null}
+}
+
+async function uploadPhotoToDrive(item){
+  try{
+    const rootId=await getOrCreateFolder('StyleMind',null);if(!rootId)return;
+    const userFolder=await getOrCreateFolder(P().name,rootId);if(!userFolder)return;
+    const roupasFolder=await getOrCreateFolder('Roupas',userFolder);if(!roupasFolder)return;
+    const blob=await fetch(item.photo).then(r=>r.blob());
+    const meta=JSON.stringify({name:item.id+'_'+item.name.replace(/[^a-zA-Z0-9]/g,'_')+'.jpg',parents:[roupasFolder]});
+    const form=new FormData();
+    form.append('metadata',new Blob([meta],{type:'application/json'}));
+    form.append('file',blob);
+    await fetch(`${DRIVE_UPLOAD}/files?uploadType=multipart`,{method:'POST',headers:{Authorization:'Bearer '+driveTokens[cu]},body:form});
+  }catch(e){console.log('Drive upload error:',e)}
+}
+
+async function sendApprovalToDrive(apprData){
+  try{
+    const token=driveTokens[cu];if(!token)return false;
+    const rootId=await getOrCreateFolder('StyleMind',null);if(!rootId)return false;
+    const apprRoot=await getOrCreateFolder('Aprovações',rootId);if(!apprRoot)return false;
+    const toFolder=await getOrCreateFolder('Para '+apprData.to_name,apprRoot);if(!toFolder)return false;
+    const content=JSON.stringify(apprData);
+    const meta=JSON.stringify({name:'appr_'+apprData.id+'.json',parents:[toFolder]});
+    const form=new FormData();
+    form.append('metadata',new Blob([meta],{type:'application/json'}));
+    form.append('file',new Blob([content],{type:'application/json'}));
+    await fetch(`${DRIVE_UPLOAD}/files?uploadType=multipart`,{method:'POST',headers:{Authorization:'Bearer '+token},body:form});
+    return true;
+  }catch{return false}
+}
+
+async function pollDriveApprovals(){
+  const token=driveTokens[cu];if(!token)return;
+  try{
+    const rootId=await getOrCreateFolder('StyleMind',null);if(!rootId)return;
+    const apprRoot=await getOrCreateFolder('Aprovações',rootId);if(!apprRoot)return;
+    const myFolder=await getOrCreateFolder('Para '+P().name,apprRoot);if(!myFolder)return;
+    const r=await fetch(`${DRIVE_API}/files?q='${myFolder}' in parents and trashed=false and name contains 'appr_'&fields=files(id,name)`,{headers:{Authorization:'Bearer '+token}});
+    const d=await r.json();
+    if(!d.files||!d.files.length)return;
+    const seenKey='sm_seen_appr_'+cu;
+    const seen=JSON.parse(localStorage.getItem(seenKey)||'[]');
+    let newCount=0;
+    for(const f of d.files){
+      if(!seen.includes(f.id)){
+        newCount++;
+        const cr=await fetch(`${DRIVE_API}/files/${f.id}?alt=media`,{headers:{Authorization:'Bearer '+token}});
+        const apprData=await cr.json();
+        const localKey='sm_drive_appr_'+cu;
+        const existing=JSON.parse(localStorage.getItem(localKey)||'[]');
+        if(!existing.find(a=>a.id===apprData.id)){
+          existing.unshift(apprData);
+          localStorage.setItem(localKey,JSON.stringify(existing));
+          seen.push(f.id);
+          localStorage.setItem(seenKey,JSON.stringify(seen));
+          sendPushNotif(apprData.from_name+' quer sua opinião','Look: '+apprData.look_name);
+        }
+      }
+    }
+    updateApprBadge();renderApprovals();
+  }catch(e){console.log('Poll error:',e)}
+}
+
+/* APPROVALS */
+function renderApprovals(){
+  const list=document.getElementById('appr-list'),empty=document.getElementById('appr-empty');
+  const localKey='sm_drive_appr_'+cu;
+  const apprList=JSON.parse(localStorage.getItem(localKey)||'[]');
+  const sub=document.getElementById('appr-sub');
+  sub.textContent=cu==='ewerton'?'Looks que a Nagila enviou para você.':'Looks que o Ewerton enviou para você.';
+  if(!apprList.length){list.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  list.innerHTML=apprList.map((a,i)=>{
+    if(a.answered){
+      return`<div class="appr-card"><div class="appr-from">${a.from_name}</div><div class="appr-look-name">${a.look_name}</div><div class="appr-answered">${a.approved?'✓ Você aprovou este look':'Você sugeriu um ajuste'}</div></div>`;
+    }
+    return`<div class="appr-card">
+      <div class="appr-from">${a.from_name} pede sua opinião</div>
+      <div class="appr-look-name">${a.look_name}</div>
+      <div class="appr-occasion">${a.occasion||''}</div>
+      ${a.msg?`<div class="appr-msg">"${a.msg}"</div>`:''}
+      <div class="appr-thumbs">${(a.thumbs||[]).map(t=>`<img class="appr-thumb" src="${t}">`).join('')}</div>
+      <div class="appr-actions">
+        <button class="appr-btn approve" onclick="respondAppr(${i},true)">Aprovado</button>
+        <button class="appr-btn suggest" onclick="respondAppr(${i},false)">Sugerir ajuste</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function respondAppr(i,approve){
+  const localKey='sm_drive_appr_'+cu;
+  const list=JSON.parse(localStorage.getItem(localKey)||'[]');
+  list[i].answered=true;list[i].approved=approve;
+  localStorage.setItem(localKey,JSON.stringify(list));
+  if(!approve){
+    const msg=prompt('Sua sugestão de ajuste:');
+    if(msg){
+      const feedback={id:Date.now(),from:cu,from_name:P().name,to:list[i].from,to_name:list[i].from_name,look_name:list[i].look_name,thumbs:list[i].thumbs,msg:'Sugestão: '+msg,occasion:list[i].occasion,is_feedback:true,ts:Date.now()};
+      if(driveTokens[cu])sendApprovalToDrive(feedback);
+    }
+  }
+  updateApprBadge();renderApprovals();
+}
+
+function updateApprBadge(){
+  const localKey='sm_drive_appr_'+cu;
+  const list=JSON.parse(localStorage.getItem(localKey)||'[]');
+  const pending=list.filter(a=>!a.answered).length;
+  const badge=document.getElementById('appr-badge');
+  if(!badge)return;
+  if(pending){badge.style.display='flex';badge.textContent=pending;}
+  else badge.style.display='none';
+}
+
+/* COMBINE CHECK */
+async function checkComb(){
+  if(selItems.length<2){alert('Selecione pelo menos 2 peças.');return}
+  const pieces=selItems.map(i=>W()[i]).filter(Boolean);
+  const desc=pieces.map(p=>`${p.cat}: ${p.name}`).join('\n');
+  cancelSel();
+  document.querySelectorAll('.navbtn')[0].click();
+  document.getElementById('ores').innerHTML='<div class="ai-card"><div class="ai-lbl">Verificando...</div><div class="loader"><div class="dots"><span></span><span></span><span></span></div></div></div>';
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MDL,max_tokens:500,system:sys()+'\nAvalie combinação. JSON sem markdown: {"combina":true/false,"nota":1-10,"avaliacao":"2 frases diretas","pontos_fortes":["p"],"ajustes":["a"],"sugestao":"o que trocar ou adicionar"}',messages:[{role:'user',content:`Avalie se combinam:\n${desc}`}]})});
+    const d=await res.json();
+    const t=d.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    const r=JSON.parse(t.replace(/```json|```/g,'').trim());
+    const col=r.combina?'var(--green)':'var(--red)';
+    const nc=r.nota>=8?'var(--green)':r.nota>=6?'var(--gold)':'var(--red)';
+    let h=`<div class="ai-card" style="border-left-color:${col}"><div class="score-row"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${col}">${r.combina?'Combina':'Não combina'}</div><div class="score-num" style="color:${nc}">${r.nota}<span style="font-size:12px;color:var(--text3)">/10</span></div></div><p style="margin-bottom:12px">${r.avaliacao||''}</p>`;
+    if(r.pontos_fortes&&r.pontos_fortes.length){h+=`<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Funciona</div>`;r.pontos_fortes.forEach(p=>{h+=`<div class="list-row">${p}</div>`});h+='</div>';}
+    if(r.ajustes&&r.ajustes.length){h+=`<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Ajustar</div>`;r.ajustes.forEach(a=>{h+=`<div class="list-row">${a}</div>`});h+='</div>';}
+    if(r.sugestao)h+=`<div style="font-size:12px;color:var(--text3);margin-top:10px;font-style:italic">${r.sugestao}</div>`;
+    h+='</div>';
+    document.getElementById('ores').innerHTML=h;
+  }catch{document.getElementById('ores').innerHTML='<div class="ai-card"><div class="ai-lbl">Erro</div>Falha. Tente novamente.</div>'}
+}
+
+/* OUTFIT */
+function selCtx(c,el){oCtx=c;document.querySelectorAll('#ctx-btns .tog').forEach(b=>b.classList.remove('on'));el.classList.add('on')}
+function selT(t,el){selTime=t;document.querySelectorAll('[onclick^="selT"]').forEach(b=>b.classList.remove('on'));el.classList.add('on')}
+function selF(f,el){selFormal=f;document.querySelectorAll('[onclick^="selF"]').forEach(b=>b.classList.remove('on'));el.classList.add('on')}
+
+async function genOutfit(){
+  const occ=document.getElementById('occ').value.trim();
+  if(!occ&&!oCtx){document.getElementById('occ').focus();return}
+  if(W().length<3){document.getElementById('ores').innerHTML='<div class="ai-card"><div class="ai-lbl">StyleMind</div>Adicione pelo menos 3 peças.</div>';return}
+  document.getElementById('oload').style.display='flex';
+  document.getElementById('ores').innerHTML='';
+  document.getElementById('gen-btn').disabled=true;
+  const wl=W().map((i,idx)=>`ID:${idx}|${i.cat}:${i.name}`).join('\n');
+  const ll=H().slice(-5).map(h=>`${h.date}: ${h.occasion} → ${h.title}`).join('\n');
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MDL,max_tokens:900,system:sys()+'\nMonte look com APENAS peças do guarda-roupa. Considere clima informado. Evite repetir últimos 5 looks. JSON sem markdown: {"titulo":"2-3 palavras elegantes","justificativa":"por que funciona (2-3 frases)","pecas":[{"id":0,"motivo":"1 frase"}],"alerta":"se houver problema — senão omita","alternativa":"1 variação concreta"}',messages:[{role:'user',content:`Contexto: ${oCtx||''}\nOcasião: ${occ||oCtx}\nHorário: ${selTime||'?'}\nFormalidade: ${selFormal||'?'}\n\nGuarda-roupa:\n${wl}\n\nÚltimos looks:\n${ll||'nenhum'}`}]})});
+    const d=await res.json();
+    const t=d.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    const r=JSON.parse(t.replace(/```json|```/g,'').trim());
+    const pieces=(r.pecas||[]).filter(p=>W()[p.id]);
+    pendingLook={title:r.titulo,occasion:(occ||oCtx||''),thumbs:pieces.map(p=>W()[p.id].photo).slice(0,4)};
+    let h=`<div class="ai-card"><div class="ai-lbl">StyleMind — ${r.titulo||'Look'}</div><p style="margin-bottom:12px">${r.justificativa||''}</p>`;
+    if(r.alerta)h+=`<p style="font-size:12px;color:var(--red);margin-bottom:10px;padding:9px;background:rgba(192,80,80,0.08);border-radius:8px">Atenção: ${r.alerta}</p>`;
+    if(pieces.length){h+='<div class="lookrow">';pieces.forEach(p=>{const it=W()[p.id];h+=`<div class="look-item"><img src="${it.photo}"><div class="look-item-info"><div class="look-item-name">${it.name}</div><div class="look-item-why">${p.motivo||''}</div></div></div>`;});h+='</div>';}
+    if(r.alternativa)h+=`<div style="margin-top:12px;padding-top:12px;border-top:0.5px solid var(--border)"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Variação</div><p style="font-size:12px;color:var(--text2)">${r.alternativa}</p></div>`;
+    h+='</div>';
+    h+=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px">`;
+    h+=`<button class="cta" style="margin-top:0" onclick="openSaveLook()">Salvar look</button>`;
+    const other=cu==='ewerton'?'nagila':'ewerton';
+    h+=`<button class="cta sec" style="margin-top:0" onclick="openSendAppr()">Pedir aprovação</button>`;
+    h+=`</div>`;
+    pieces.forEach(p=>{
+      const item=W()[p.id];
+      if(item){if(!usageCount[cu])usageCount[cu]={};usageCount[cu][item.id]=(usageCount[cu][item.id]||0)+1;}
+    });
+    saveUC();
+    document.getElementById('ores').innerHTML=h;
+  }catch{document.getElementById('ores').innerHTML='<div class="ai-card"><div class="ai-lbl">Erro</div>Falha. Tente novamente.</div>'}
+  document.getElementById('oload').style.display='none';
+  document.getElementById('gen-btn').disabled=false;
+}
+
+/* SAVE LOOK */
+function openSaveLook(){
+  if(!pendingLook)return;
+  document.getElementById('save-look-name').value=pendingLook.title||'';
+  openOverlay('save-look-wrap');
+}
+
+function confirmSaveLook(){
+  const n=document.getElementById('save-look-name').value.trim();
+  if(!n||!pendingLook)return;
+  SL().unshift({name:n,occasion:pendingLook.occasion,thumbs:pendingLook.thumbs,date:new Date().toLocaleDateString('pt-BR'),ts:Date.now()});
+  saveSL();
+  H().unshift({title:n,occasion:pendingLook.occasion,thumbs:pendingLook.thumbs,date:new Date().toLocaleDateString('pt-BR'),ts:Date.now()});
+  if(H().length>60)H().splice(60);
+  saveH();
+  closeOverlay('save-look-wrap');
+  const btn=document.querySelector('#ores .cta');
+  if(btn){btn.textContent='Salvo!';btn.disabled=true;}
+}
+
+/* SEND APPROVAL */
+function openSendAppr(){
+  if(!pendingLook)return;
+  const other=cu==='ewerton'?'nagila':'ewerton';
+  const otherName=profiles[other]?.name||other;
+  document.getElementById('send-appr-title').textContent='Pedir aprovação de '+otherName;
+  document.getElementById('send-appr-sub').textContent='Vai aparecer para '+otherName+' na aba Aprovação';
+  document.getElementById('send-appr-btn').textContent='Enviar para '+otherName;
+  document.getElementById('send-appr-preview').innerHTML='<div style="display:flex;gap:6px">'+(pendingLook.thumbs||[]).map(t=>`<img style="width:46px;height:60px;border-radius:6px;object-fit:cover" src="${t}">`).join('')+'</div>';
+  openOverlay('send-appr-wrap');
+}
+
+async function confirmSendApproval(){
+  if(!pendingLook)return;
+  const other=cu==='ewerton'?'nagila':'ewerton';
+  const otherName=profiles[other]?.name||other;
+  const msg=document.getElementById('send-appr-msg').value.trim();
+  const apprData={id:Date.now(),from:cu,from_name:P().name,to:other,to_name:otherName,look_name:pendingLook.title,thumbs:pendingLook.thumbs,occasion:pendingLook.occasion,msg,ts:Date.now(),answered:false,approved:false};
+  closeOverlay('send-appr-wrap');
+  document.getElementById('send-appr-msg').value='';
+  const btn=document.querySelector('#ores .cta.sec');
+  if(btn){btn.textContent='Enviando...';btn.disabled=true;}
+  let saved=false;
+  if(driveTokens[cu])saved=await sendApprovalToDrive(apprData);
+  if(saved){if(btn){btn.textContent='Enviado!';}}
+  else{
+    const localKey='sm_drive_appr_'+other;
+    const existing=JSON.parse(localStorage.getItem(localKey)||'[]');
+    existing.unshift(apprData);
+    localStorage.setItem(localKey,JSON.stringify(existing));
+    if(btn){btn.textContent='Enviado (local)';}
+  }
+}
+
+/* NOTIFICATIONS */
+async function requestNotif(){
+  if(!('Notification' in window)){alert('Notificações não suportadas neste browser.');return}
+  const p=await Notification.requestPermission();
+  const btn=document.getElementById('notif-btn');
+  if(p==='granted'){btn.textContent='Notificações ativas';btn.disabled=true;localStorage.setItem('notif_ok','1');}
+  else{btn.textContent='Permissão negada';}
+}
+
+function sendPushNotif(title,body){
+  if(Notification.permission==='granted'){
+    try{new Notification(title,{body,icon:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="%230C0A08"/><text y=".9em" font-size="60" x="50" text-anchor="middle" dy="0.1em" fill="%23C49040" font-family="Georgia">S</text></svg>'});}catch(e){}
+  }
+}
+
+/* REVIEW */
+async function onRevPhoto(e){
+  const f=e.target.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    rB64=ev.target.result.split(',')[1];
+    document.getElementById('rzone').style.display='none';
+    document.getElementById('rpreview').style.display='block';
+    document.getElementById('rpreview').innerHTML=`<img style="width:100%;border-radius:var(--r);max-height:360px;object-fit:cover;display:block;margin-bottom:14px" src="${ev.target.result}">`;
+    document.getElementById('rctx').style.display='block';
+    document.getElementById('rres').innerHTML='';
+  };reader.readAsDataURL(f);
+}
+
+async function doReview(){
+  if(!rB64)return;
+  const ctx=document.getElementById('rctx-input').value.trim();
+  document.getElementById('rload').style.display='flex';document.getElementById('rres').innerHTML='';
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MDL,max_tokens:700,system:sys()+'\nAvalie o look com rigor. JSON sem markdown: {"aprovado":true/false,"nota":1-10,"veredicto":"Aprovado|Ajuste necessário|Não sai assim","avaliacao":"2-3 frases","caimento":"avaliação","harmonia":"cores vs paleta","pontos_fortes":["p"],"melhorias":["m + proposta"],"principio":"princípio de estilo"}',messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:rB64}},{type:'text',text:`Ocasião: ${ctx||'não informada'}.`}]}]})});
+    const d=await res.json();
+    const t=d.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    const r=JSON.parse(t.replace(/```json|```/g,'').trim());
+    const col=r.aprovado?'var(--green)':'var(--red)';
+    const nc=r.nota>=8?'var(--green)':r.nota>=6?'var(--gold)':'var(--red)';
+    let h=`<div class="ai-card" style="border-left-color:${col}"><div class="score-row"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:${col}">${r.veredicto||''}</div><div class="score-num" style="color:${nc}">${r.nota}<span style="font-size:12px;color:var(--text3)">/10</span></div></div><p style="margin-bottom:12px">${r.avaliacao||''}</p>`;
+    if(r.caimento)h+=`<div style="font-size:12px;color:var(--text2);margin-bottom:6px;padding:9px;background:var(--s2);border-radius:8px">Caimento: ${r.caimento}</div>`;
+    if(r.harmonia)h+=`<div style="font-size:12px;color:var(--text2);margin-bottom:12px;padding:9px;background:var(--s2);border-radius:8px">Cores: ${r.harmonia}</div>`;
+    if(r.pontos_fortes&&r.pontos_fortes.length){h+=`<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--green);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Funciona</div>`;r.pontos_fortes.forEach(p=>{h+=`<div class="list-row">${p}</div>`});h+='</div>';}
+    if(r.melhorias&&r.melhorias.length){h+=`<div style="margin-bottom:10px"><div style="font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Ajustar</div>`;r.melhorias.forEach(m=>{h+=`<div class="list-row">${m}</div>`});h+='</div>';}
+    if(r.principio)h+=`<div style="font-size:12px;color:var(--text3);margin-top:10px;font-style:italic;line-height:1.6">${r.principio}</div>`;
+    h+='</div><button class="cta sec sm" onclick="resetRev()">Avaliar outro look</button>';
+    document.getElementById('rres').innerHTML=h;
+  }catch{document.getElementById('rres').innerHTML='<div class="ai-card"><div class="ai-lbl">Erro</div>Falha. Tente novamente.</div>'}
+  document.getElementById('rload').style.display='none';
+}
+
+function resetRev(){
+  rB64=null;
+  document.getElementById('rzone').style.display='block';
+  document.getElementById('rpreview').style.display='none';
+  document.getElementById('rctx').style.display='none';
+  document.getElementById('rres').innerHTML='';
+  document.getElementById('rinput').value='';
+  document.getElementById('rctx-input').value='';
+}
+
+/* SAVED LOOKS */
+function renderSavedLooks(){
+  const list=document.getElementById('saved-list'),empty=document.getElementById('saved-empty');
+  if(!SL().length){list.innerHTML='';empty.style.display='block';return}
+  empty.style.display='none';
+  list.innerHTML=SL().map((l,i)=>`<div class="saved-card">
+    <div class="saved-header"><div class="saved-name">${l.name}</div><button class="icon-btn" onclick="deleteSaved(${i})">Remover</button></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">${l.occasion||''} · ${l.date}</div>
+    <div style="display:flex;gap:6px">${(l.thumbs||[]).map(t=>`<img style="width:42px;height:56px;border-radius:6px;object-fit:cover" src="${t}">`).join('')}</div>
+  </div>`).join('');
+}
+
+function deleteSaved(i){SL().splice(i,1);saveSL();renderSavedLooks()}
+
+/* SHOPPING */
+function renderShoppingList(){
+  const list=document.getElementById('shop-list'),empty=document.getElementById('shop-empty'),clearBtn=document.getElementById('clear-shop-btn');
+  const mine=shoppingList.filter(i=>i.user===cu);
+  if(!mine.length){list.innerHTML='';empty.style.display='block';clearBtn.style.display='none';return}
+  empty.style.display='none';
+  clearBtn.style.display=mine.some(i=>i.done)?'block':'none';
+  list.innerHTML=mine.map((item)=>{
+    const ri=shoppingList.indexOf(item);
+    return`<div class="shop-item">
+      <div class="shop-check ${item.done?'done':''}" onclick="toggleShop(${ri})"></div>
+      <div style="flex:1"><div class="shop-name ${item.done?'done':''}">${item.name}</div>${item.detail?`<div class="shop-detail">${item.detail}</div>`:''}</div>
+      <button class="shop-del" onclick="deleteShop(${ri})">×</button>
+    </div>`;
+  }).join('');
+}
+function toggleShop(i){shoppingList[i].done=!shoppingList[i].done;saveShop();renderShoppingList()}
+function deleteShop(i){shoppingList.splice(i,1);saveShop();renderShoppingList()}
+function clearDoneShop(){shoppingList=shoppingList.filter(i=>!i.done);saveShop();renderShoppingList()}
+function addToShop(name,detail){shoppingList.push({name,detail:detail||'',user:cu,done:false,id:Date.now()});saveShop();}
+
+/* CALENDAR */
+function renderCalendar(){
+  const grid=document.getElementById('week-grid');
+  const days=['Dom','Seg','Ter','Qua','Qui','Sex','Sab'];
+  const today=new Date();
+  let html='';
+  for(let i=6;i>=0;i--){
+    const d=new Date(today);d.setDate(today.getDate()-i);
+    const ds=d.toLocaleDateString('pt-BR');
+    const look=H().find(h=>h.date===ds);
+    html+=`<div class="day-col"><div class="day-lbl">${days[d.getDay()]}</div><div class="day-dot ${look?'has':''} ${i===0?'today':''}" onclick="showDayDetail('${ds}')">${d.getDate()}</div></div>`;
+  }
+  grid.innerHTML=html;
+  document.getElementById('cal-detail').innerHTML='';
+  document.getElementById('hist-list-cal').innerHTML=H().slice(0,10).map(h=>`<div class="saved-card" style="margin-bottom:10px">
+    <div class="saved-header"><div class="saved-name">${h.title}</div><div style="font-size:10px;color:var(--text3)">${h.date}</div></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px">${h.occasion||''}</div>
+    <div style="display:flex;gap:5px">${(h.thumbs||[]).map(t=>`<img style="width:36px;height:48px;border-radius:5px;object-fit:cover" src="${t}">`).join('')}</div>
+  </div>`).join('');
+}
+
+function showDayDetail(ds){
+  const look=H().find(h=>h.date===ds);
+  const el=document.getElementById('cal-detail');
+  if(!look){el.innerHTML=`<div style="font-size:12px;color:var(--text3);padding:8px 0">Nenhum look neste dia.</div>`;return}
+  el.innerHTML=`<div class="saved-card" style="margin:10px 0"><div class="saved-name">${look.title}</div><div style="font-size:11px;color:var(--text3);margin-bottom:8px">${look.occasion||''}</div><div style="display:flex;gap:5px">${(look.thumbs||[]).map(t=>`<img style="width:42px;height:56px;border-radius:6px;object-fit:cover" src="${t}">`).join('')}</div></div>`;
+}
+
+/* GAPS */
+async function analyzeGaps(){
+  if(W().length<3){document.getElementById('gres').innerHTML='<div class="ai-card"><div class="ai-lbl">StyleMind</div>Adicione pelo menos 3 peças.</div>';return}
+  document.getElementById('gload').style.display='flex';document.getElementById('gres').innerHTML='';document.getElementById('gaps-btn').disabled=true;
+  const wl=W().map(i=>`${i.cat}: ${i.name}`).join('\n');
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MDL,max_tokens:900,system:sys()+'\nAnalise lacunas. JSON sem markdown: {"analise":"2 frases","lacunas":[{"peca":"peça","motivo":"importância","prioridade":"alta|media|baixa","sugestao":"o que comprar"}],"pontos_fortes":["ponto"]}',messages:[{role:'user',content:`Guarda-roupa:\n${wl}`}]})});
+    const d=await res.json();
+    const t=d.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    const r=JSON.parse(t.replace(/```json|```/g,'').trim());
+    let h=`<div class="ai-card"><div class="ai-lbl">Análise</div><p>${r.analise||''}</p></div>`;
+    if(r.pontos_fortes&&r.pontos_fortes.length){h+=`<div class="ai-card" style="margin-top:10px;border-left-color:var(--green)"><div class="ai-lbl" style="color:var(--green)">Pontos fortes</div>`;r.pontos_fortes.forEach(p=>{h+=`<div class="list-row">${p}</div>`});h+='</div>';}
+    if(r.lacunas&&r.lacunas.length){
+      h+=`<div style="margin-top:14px"><div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Lacunas</div>`;
+      r.lacunas.forEach(l=>{
+        const pc=l.prioridade==='alta'?'gap-high':l.prioridade==='media'?'gap-med':'gap-low';
+        const nameJson=JSON.stringify(l.peca||'');const detJson=JSON.stringify(l.sugestao||'');
+        h+=`<div class="gap-card"><div class="gap-title">${l.peca||''}</div><div class="gap-desc">${l.motivo||''}</div>${l.sugestao?`<div class="gap-desc" style="color:var(--gold);margin-top:4px">${l.sugestao}</div>`:''}<div class="gap-priority ${pc}" style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;margin-top:6px">${l.prioridade==='alta'?'Alta':'Média'} prioridade</div><button class="icon-btn" style="margin-top:8px" onclick="addToShop(${nameJson},${detJson})">+ Lista de compras</button></div>`;
+      });
+      h+='</div>';
+    }
+    document.getElementById('gres').innerHTML=h;
+  }catch{document.getElementById('gres').innerHTML='<div class="ai-card"><div class="ai-lbl">Erro</div>Falha. Tente novamente.</div>'}
+  document.getElementById('gload').style.display='none';document.getElementById('gaps-btn').disabled=false;
+}
+
+/* TRAVEL */
+function selClima(c,el){tClima=c;document.querySelectorAll('[onclick^="selClima"]').forEach(b=>b.classList.remove('on'));el.classList.add('on')}
+function selDias(d,el){tDias=d;document.querySelectorAll('[onclick^="selDias"]').forEach(b=>b.classList.remove('on'));el.classList.add('on')}
+function togAct(a,el){if(tActs.includes(a)){tActs=tActs.filter(x=>x!==a);el.classList.remove('on')}else{tActs.push(a);el.classList.add('on')}}
+
+async function genTravel(){
+  const dest=document.getElementById('t-dest').value.trim();
+  if(!dest||!tDias){document.getElementById('t-dest').focus();return}
+  if(W().length<4){document.getElementById('tres').innerHTML='<div class="ai-card"><div class="ai-lbl">StyleMind</div>Adicione pelo menos 4 peças.</div>';return}
+  document.getElementById('tload').style.display='flex';document.getElementById('tres').innerHTML='';document.getElementById('travel-btn').disabled=true;
+  const wl=W().map((i,idx)=>`ID:${idx}|${i.cat}:${i.name}`).join('\n');const nd=tDias==='2-3'?3:tDias==='4-6'?5:7;
+  try{
+    const res=await fetch(API,{method:'POST',headers:{'Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:MDL,max_tokens:1200,system:sys()+'\nPlaneje mala. JSON sem markdown: {"resumo":"1-2 frases","dias":[{"dia":1,"contexto":"","look":["peça"],"nota":"dica"}],"essenciais":["item"]}',messages:[{role:'user',content:`Destino: ${dest}\nClima: ${tClima||'ameno'}\nDias: ${nd}\nAtividades: ${tActs.join(', ')||'misto'}\n\nGuarda-roupa:\n${wl}`}]})});
+    const d=await res.json();const t=d.content.filter(c=>c.type==='text').map(c=>c.text).join('');
+    const r=JSON.parse(t.replace(/```json|```/g,'').trim());
+    let h=`<div class="ai-card"><div class="ai-lbl">Mala — ${dest}</div><p style="margin-bottom:12px">${r.resumo||''}</p></div>`;
+    if(r.dias&&r.dias.length){h+='<div style="margin-top:12px">';r.dias.forEach(dia=>{h+=`<div class="travel-day"><div class="travel-day-head"><div class="travel-day-num">Dia ${dia.dia}</div><div class="travel-day-ctx">${dia.contexto||''}</div></div><div class="travel-day-body">${(dia.look||[]).map(p=>`<div class="travel-item">${p}</div>`).join('')}${dia.nota?`<div style="font-size:11px;color:var(--text3);margin-top:7px;font-style:italic">${dia.nota}</div>`:''}</div></div>`;});h+='</div>';}
+    if(r.essenciais&&r.essenciais.length){h+=`<div class="ai-card" style="margin-top:10px;border-left-color:var(--text3)"><div class="ai-lbl" style="color:var(--text3)">Não esquecer</div>`;r.essenciais.forEach(e=>{h+=`<div class="list-row">${e}</div>`});h+='</div>';}
+    document.getElementById('tres').innerHTML=h;
+  }catch{document.getElementById('tres').innerHTML='<div class="ai-card"><div class="ai-lbl">Erro</div>Falha. Tente novamente.</div>'}
+  document.getElementById('tload').style.display='none';document.getElementById('travel-btn').disabled=false;
+}
+
+/* FREQUENCY */
+function showFreq(){
+  const uc=usageCount[cu]||{};
+  const items=W().map(item=>({item,uses:uc[item.id]||0})).sort((a,b)=>a.uses-b.uses);
+  const never=items.filter(i=>i.uses===0),rare=items.filter(i=>i.uses===1);
+  let h='';
+  if(never.length){h+=`<div class="ai-card" style="border-left-color:var(--red);margin-top:14px"><div class="ai-lbl" style="color:var(--red)">Nunca usadas (${never.length})</div>`;never.forEach(({item})=>{h+=`<div class="list-row">${item.cat}: ${item.name}</div>`});h+='</div>';}
+  if(rare.length){h+=`<div class="ai-card" style="border-left-color:var(--gold);margin-top:10px"><div class="ai-lbl">Raramente usadas</div>`;rare.forEach(({item})=>{h+=`<div class="list-row">${item.cat}: ${item.name}</div>`});h+='</div>';}
+  if(!never.length&&!rare.length)h='<div class="ai-card" style="margin-top:12px"><div class="ai-lbl">Análise</div>Você usa bem todas as peças.</div>';
+  document.getElementById('freq-result').innerHTML=h;
+}
+
+/* PROFILE */
+function renderProfile(){
+  const p=P();
+  const eC=['#8B4513','#C4944A','#722F37','#5C6B3A','#B8860B','#6B4423','#D2B48C','#4A3728'];
+  const nC=['#FF6B6B','#FFD93D','#6BCB77','#4D96FF','#FF6BCD','#FF8C42','#9B5DE5','#00BBF9'];
+  const colors=cu==='ewerton'?eC:nC;
+  const localKey='sm_drive_appr_'+cu;
+  const pending=JSON.parse(localStorage.getItem(localKey)||'[]').filter(a=>!a.answered).length;
+  document.getElementById('profile-view').innerHTML=`
+    <div class="profile-hero">
+      <div class="profile-avatar">${p.initials||p.name.slice(0,2).toUpperCase()}</div>
+      <div class="profile-name">${p.name}</div>
+      <div class="profile-season">${cu==='ewerton'?'Outono Escuro':'Primavera Viva'}</div>
+      <div class="profile-stats">
+        <div class="pstat"><div class="pstat-val">${W().length}</div><div class="pstat-lbl">Peças</div></div>
+        <div class="pstat"><div class="pstat-val">${H().length}</div><div class="pstat-lbl">Looks</div></div>
+        <div class="pstat"><div class="pstat-val">${SL().length}</div><div class="pstat-lbl">Salvos</div></div>
+        <div class="pstat"><div class="pstat-val">${pending}</div><div class="pstat-lbl">Aprovações</div></div>
+      </div>
+      <div class="palette-strip">${colors.map(c=>`<div class="pdot" style="background:${c}"></div>`).join('')}</div>
+    </div>
+    ${p.style?`<div class="lbl">Estilo</div><div class="info-block">${p.style}</div>`:''}
+    ${p.goals?`<div class="lbl">Objetivos</div><div class="info-block">${p.goals}</div>`:''}
+  `;
+  const notifBtn=document.getElementById('notif-btn');
+  if(notifBtn&&localStorage.getItem('notif_ok')==='1'){notifBtn.textContent='Notificações ativas';notifBtn.disabled=true;}
+}
+
+function openProfileEdit(){
+  const p=P();document.getElementById('pe-title').textContent='Editar — '+p.name;
+  ['name','height','weight','palette','style','contexts','goals','notes'].forEach(k=>{const el=document.getElementById('pe-'+k);if(el)el.value=p[k]||''});
+  openOverlay('profile-wrap');
+}
+
+function saveProfile(){
+  const p=profiles[cu];
+  const n=document.getElementById('pe-name').value.trim();
+  p.name=n||p.name;p.initials=p.name.slice(0,2).toUpperCase();
+  ['height','weight','palette','style','contexts','goals','notes'].forEach(k=>{p[k]=document.getElementById('pe-'+k).value.trim()});
+  document.getElementById('pill-'+cu).textContent=p.name;
+  saveProfiles();closeOverlay('profile-wrap');renderProfile();
+}
+
+/* DRIVE CONNECT */
+function connectDrive(user){
+  const cid=document.getElementById('cid-'+user).value.trim();
+  if(!cid){alert('Cole seu Google Client ID.');return}
+  localStorage.setItem('sm_cid_'+user,cid);
+  const dot=document.getElementById('dd-'+user),status=document.getElementById('ds-'+user);
+  dot.className='drive-dot sync';status.textContent='Autenticando...';
+  const redirect=window.location.href.split('?')[0].split('#')[0];
+  const authUrl=`https://accounts.google.com/o/oauth2/auth?client_id=${encodeURIComponent(cid)}&redirect_uri=${encodeURIComponent(redirect)}&scope=https://www.googleapis.com/auth/drive.file&response_type=token&state=${user}`;
+  const popup=window.open(authUrl,'_blank','width=500,height=600');
+  const check=setInterval(()=>{
+    try{if(popup&&popup.location&&popup.location.hash){
+      const hash=popup.location.hash;
+      const token=new URLSearchParams(hash.replace('#','&')).get('access_token');
+      const state=new URLSearchParams(hash.replace('#','&')).get('state')||user;
+      if(token){clearInterval(check);popup.close();driveTokens[state]=token;localStorage.setItem('sm_dt_'+state,token);
+        document.getElementById('dd-'+state).className='drive-dot ok';
+        document.getElementById('ds-'+state).textContent='Conectado — sincronizando automaticamente';}
+    }}catch(e){}
+  },500);
+  setTimeout(()=>{clearInterval(check);if(!driveTokens[user]){dot.className='drive-dot';status.textContent='Tempo esgotado.'}},120000);
+}
+
+/* OVERLAY */
+function openOverlay(id){document.getElementById(id).classList.add('on')}
+function closeOverlay(id){document.getElementById(id).classList.remove('on')}
+document.querySelectorAll('.overlay').forEach(o=>{o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on')})});
+
+/* EXPORT/IMPORT */
+function exportData(){
+  const data={profiles,wardrobes,histories,savedLooks,shoppingList,exported:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;
+  a.download='stylemind_v6_'+new Date().toLocaleDateString('pt-BR').replace(/\//g,'-')+'.json';
+  a.click();URL.revokeObjectURL(url);
+}
+function doImport(e){
+  const f=e.target.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(data.wardrobes){wardrobes=data.wardrobes;['ewerton','nagila'].forEach(u=>localStorage.setItem('sm_w_'+u,JSON.stringify(wardrobes[u]||[])))}
+      if(data.histories){histories=data.histories;['ewerton','nagila'].forEach(u=>localStorage.setItem('sm_h_'+u,JSON.stringify(histories[u]||[])))}
+      if(data.savedLooks){savedLooks=data.savedLooks;['ewerton','nagila'].forEach(u=>localStorage.setItem('sm_sl_'+u,JSON.stringify(savedLooks[u]||[])))}
+      if(data.shoppingList){shoppingList=data.shoppingList;saveShop()}
+      if(data.profiles){profiles=data.profiles;saveProfiles()}
+      alert('Importado com sucesso.');renderW();renderProfile();
+    }catch{alert('Arquivo inválido.')}
+  };reader.readAsText(f);
+}
+
+/* INIT */
+['ewerton','nagila'].forEach(u=>{
+  const t=localStorage.getItem('sm_dt_'+u);
+  if(t){driveTokens[u]=t;const dot=document.getElementById('dd-'+u);const st=document.getElementById('ds-'+u);if(dot)dot.className='drive-dot ok';if(st)st.textContent='Conectado — sincronizando automaticamente';}
+  const cid=localStorage.getItem('sm_cid_'+u);
+  if(cid){const el=document.getElementById('cid-'+u);if(el)el.value=cid;}
+});
+
+fetchWeather();
+renderW();
+renderProfile();
+updateApprBadge();
+setInterval(()=>{if(driveTokens[cu])pollDriveApprovals();},60000);
+</script>
+</body>
+</html>
