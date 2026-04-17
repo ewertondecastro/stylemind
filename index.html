@@ -241,6 +241,81 @@ textarea.field:focus,input.field:focus{border-color:var(--gold)}
 .empty-box{text-align:center;padding:40px 20px}
 .empty-t{font-family:var(--font);font-size:22px;color:var(--text3);margin-bottom:8px}
 .empty-s{font-size:15px;color:var(--text3);line-height:1.6}
+
+/* ── TYPOGRAPHY OVERRIDES V2 ── */
+body{font-size:17px}
+.logo{font-size:28px !important}
+.upill{font-size:15px !important;padding:10px 20px !important}
+.navbtn-lbl{font-size:12px !important;font-weight:500}
+.navbtn{padding:16px 4px !important}
+.navbtn-icon{width:32px !important;height:32px !important}
+.navbtn-icon svg{width:16px !important;height:16px !important}
+.lbl{font-size:12px !important;letter-spacing:2px;margin-top:26px !important;margin-bottom:14px !important}
+.lbl:first-child{margin-top:0 !important}
+.sec-head{font-size:26px !important}
+.sec-sub{font-size:16px !important;line-height:1.7}
+textarea.field,input.field{font-size:17px !important;padding:18px !important;line-height:1.5}
+.cta{font-size:17px !important;padding:22px !important;border-radius:14px !important}
+.cta.sec{font-size:16px !important;padding:19px !important}
+.cta.sm{font-size:15px !important;padding:17px !important}
+.add-btn{font-size:16px !important;padding:20px !important;border-radius:14px !important}
+.tog{font-size:15px !important;padding:17px 8px !important;border-radius:12px !important}
+.w-name{font-size:15px !important}
+.w-cat{font-size:12px !important;letter-spacing:1px}
+.w-info{padding:14px !important}
+.ai-card{font-size:16px !important;padding:20px !important;line-height:1.8}
+.ai-lbl{font-size:12px !important;margin-bottom:12px !important}
+.list-row{font-size:15px !important;padding:10px 0 !important}
+.look-item-name{font-size:12px !important}
+.look-item-why{font-size:11px !important}
+.score-num{font-size:44px !important}
+.saved-name{font-size:18px !important}
+.shop-name{font-size:16px !important}
+.shop-detail{font-size:14px !important}
+.appr-look-name{font-size:20px !important}
+.appr-occasion{font-size:15px !important}
+.appr-msg{font-size:15px !important}
+.appr-btn{font-size:16px !important;padding:18px !important}
+.appr-from{font-size:13px !important}
+.gap-title{font-size:16px !important}
+.gap-desc{font-size:14px !important}
+.gap-priority{font-size:12px !important}
+.travel-item{font-size:15px !important}
+.travel-day-ctx{font-size:13px !important}
+.profile-name{font-size:26px !important}
+.profile-season{font-size:15px !important}
+.pstat-val{font-size:22px !important}
+.pstat-lbl{font-size:12px !important}
+.info-block{font-size:16px !important;padding:18px !important;line-height:1.75}
+.empty-t{font-size:22px !important}
+.empty-s{font-size:16px !important;line-height:1.7}
+.uz-t{font-size:22px !important}
+.uz-s{font-size:15px !important}
+.sheet-title{font-size:24px !important}
+.sheet-sub{font-size:15px !important}
+.cat-b-label{font-size:13px !important}
+.cat-b{padding:18px 6px !important}
+.icon-btn{font-size:14px !important;padding:9px 16px !important}
+.sel-btn{font-size:14px !important;padding:12px 18px !important}
+.sel-count{font-size:16px !important}
+.weather-temp{font-size:20px !important;font-weight:600}
+.weather-desc{font-size:15px !important}
+.weather-note{font-size:14px !important}
+.weather-bar{padding:16px 18px !important}
+.day-lbl{font-size:12px !important}
+.day-dot{font-size:14px !important;width:38px !important;height:38px !important}
+.loader{font-size:16px !important;gap:12px !important}
+.drive-user{font-size:15px !important}
+.drive-status{font-size:13px !important}
+.google-btn{font-size:15px !important;padding:17px !important}
+.saved-card{padding:16px !important}
+.appr-card{padding:18px !important}
+.sel-toolbar{padding:14px 0 !important}
+.add-strip{margin-bottom:20px !important;gap:12px !important}
+.screen{padding:22px 22px !important;padding-bottom:calc(var(--sab) + 60px) !important}
+.profile-stats{gap:8px !important;margin-top:18px !important}
+.pstat{padding:14px 8px !important}
+.tool-tabs{gap:10px !important;margin-bottom:22px !important}
 </style>
 </head>
 <body>
@@ -304,10 +379,10 @@ textarea.field:focus,input.field:focus{border-color:var(--gold)}
       <div class="row3" style="margin-bottom:10px" id="ctx-btns">
         <button class="tog" onclick="selCtx('Profissional',this)">Profissional</button>
         <button class="tog" onclick="selCtx('Igreja',this)">Igreja</button>
-        <button class="tog" onclick="selCtx('Social',this)">Social</button>
         <button class="tog" onclick="selCtx('Casual',this)">Casual</button>
         <button class="tog" onclick="selCtx('Viagem',this)">Viagem</button>
-        <button class="tog" onclick="selCtx('Família',this)">Família</button>
+        <button class="tog" onclick="selCtx('Fotografia',this)">Fotografia</button>
+        <button class="tog" onclick="selCtx('Jantar',this)">Jantar</button>
       </div>
       <div class="lbl">Ocasião</div>
       <textarea class="field" id="occ" placeholder="Reunião com cliente, culto, jantar, ensaio fotográfico..." rows="2"></textarea>
@@ -591,7 +666,7 @@ const DEF={
   ewerton:{name:'Ewerton',initials:'ED',height:'1,83m',weight:'',
     palette:'Dark Autumn — CORES: terracota, borgonha, verde oliva escuro, verde petróleo, caramelo, marrom chocolate, laranja queimado, amarelo mostarda, roxo escuro. NEUTROS: off-white quente, bege quente, camelo, marrom, preto esverdeado. EVITAR: branco frio, pastéis, tons frios, candy colors. METAIS: cobre, bronze, dourado fosco — nunca espelhado.',
     style:'Elegante clássico contemporâneo. Caimento impecável. Qualidade > quantidade. Autoridade calma. Sofisticação discreta.',
-    contexts:'Profissional (CEO Fidelium Financial), Eclesiástico (pastor reformado), Social, Fotografia (Decastro Photography), Família, Viagens.',
+    contexts:'Profissional (CEO Fidelium Financial — reuniões e clientes), Igreja (pastor reformado — cultos e eventos eclesiásticos), Casual (dia a dia), Viagem, Fotografia (Decastro Photography — ensaios profissionais), Jantar (restaurantes, eventos sociais).',
     goals:'Comunicar dignidade, coerência e bom gosto. Presença refinada. Elegância como respeito, nunca vaidade.',
     notes:'1,83m, pele bronzeada subtom quente-dourado. Cape Cod MA. CEO, pastor, fotógrafo, pai.'},
   nagila:{name:'Nagila',initials:'ND',height:'1,63m',weight:'145 lb',
