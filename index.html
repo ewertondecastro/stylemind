@@ -1807,6 +1807,33 @@ async function submitGateKey(){
   if(cid){const el=document.getElementById('cid-'+u);if(el)el.value=cid;}
 });
 
+// Service Worker registration
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(function(reg){
+    reg.addEventListener('updatefound',function(){
+      var newSW=reg.installing;
+      newSW.addEventListener('statechange',function(){
+        if(newSW.state==='installed'&&navigator.serviceWorker.controller){
+          // New version available
+          var bar=document.createElement('div');
+          bar.id='update-bar';
+          bar.style.cssText='position:fixed;bottom:calc(env(safe-area-inset-bottom)+70px);left:16px;right:16px;background:var(--gold);color:#0C0A08;padding:14px 18px;border-radius:14px;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:space-between;z-index:200;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
+          bar.innerHTML='Nova versão disponível <button onclick="doUpdate()" style="background:#0C0A08;color:var(--gold);border:none;padding:8px 16px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer">Atualizar</button>';
+          document.body.appendChild(bar);
+          window._newSW=newSW;
+        }
+      });
+    });
+  }).catch(function(e){console.log('SW error:',e)});
+  navigator.serviceWorker.addEventListener('controllerchange',function(){
+    window.location.reload();
+  });
+}
+function doUpdate(){
+  if(window._newSW)window._newSW.postMessage({type:'SKIP_WAITING'});
+  var bar=document.getElementById('update-bar');
+  if(bar)bar.innerHTML='Atualizando...';
+}
 checkGate();
 fetchWeather();
 renderW();
