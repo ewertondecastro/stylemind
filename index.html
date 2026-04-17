@@ -244,6 +244,23 @@ textarea.field:focus,input.field:focus{border-color:var(--gold)}
 </style>
 </head>
 <body>
+
+<!-- API KEY GATE -->
+<div class="overlay" id="apikey-gate" style="background:rgba(12,10,8,0.98);z-index:100;display:none;align-items:flex-end;flex-direction:column;justify-content:flex-end">
+  <div class="sheet" style="border-radius:24px 24px 0 0;padding:32px 24px;padding-bottom:calc(var(--sab) + 40px)">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-family:var(--font);font-size:28px;color:var(--text);margin-bottom:6px">Style<em style="color:var(--gold);font-style:normal">Mind</em></div>
+      <div style="font-size:13px;color:var(--text3)">Guarda-roupa inteligente</div>
+    </div>
+    <div class="lbl" style="margin-top:0">API Key da Anthropic</div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:14px;line-height:1.7">Para usar o app você precisa de uma API key.<br>Obtenha em <span style="color:var(--gold)">console.anthropic.com</span> → API Keys</div>
+    <input type="password" class="field" id="gate-key-input" placeholder="sk-ant-..." style="font-size:13px;padding:14px;letter-spacing:1px">
+    <div id="gate-key-error" style="font-size:12px;color:var(--red);margin-top:8px;display:none">Verifique a key e tente novamente.</div>
+    <button class="cta" onclick="submitGateKey()" style="margin-top:14px">Entrar no StyleMind</button>
+    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:14px;line-height:1.6">Salva só no seu iPhone. Nunca enviada a outros servidores.</div>
+  </div>
+</div>
+
 <div id="shell">
   <div id="topbar">
     <div class="tb-inner">
@@ -1338,20 +1355,21 @@ function saveApiKey(){
 }
 
 function checkGate(){
+  const gate=document.getElementById('apikey-gate');
+  if(!gate)return;
   const k=getKey();
-  if(k){document.getElementById('apikey-gate').classList.remove('on');return}
-  document.getElementById('apikey-gate').classList.add('on');
+  if(k){gate.style.display='none';return}
+  gate.style.display='flex';
 }
 
 async function submitGateKey(){
   const k=document.getElementById('gate-key-input').value.trim();
-  if(!k||!k.startsWith('sk-ant')){
-    document.getElementById('gate-key-error').style.display='block';return;
-  }
+  if(!k){document.getElementById('gate-key-error').style.display='block';return;}
   localStorage.setItem('sm_apikey',k);
   const input=document.getElementById('api-key-input');
   if(input)input.value=k;
-  document.getElementById('apikey-gate').classList.remove('on');
+  const gate=document.getElementById('apikey-gate');
+  if(gate)gate.style.display='none';
 }
 
 /* INIT */
@@ -1369,21 +1387,5 @@ renderProfile();
 updateApprBadge();
 setInterval(()=>{if(driveTokens[cu])pollDriveApprovals();},60000);
 </script>
-
-<!-- API KEY GATE -->
-<div class="overlay on" id="apikey-gate" style="background:rgba(12,10,8,0.98);z-index:100">
-  <div class="sheet" style="border-radius:24px 24px 0 0;padding:32px 24px;padding-bottom:calc(var(--sab) + 40px)">
-    <div style="text-align:center;margin-bottom:24px">
-      <div style="font-family:var(--font);font-size:28px;color:var(--text);margin-bottom:6px">Style<em style="color:var(--gold);font-style:normal">Mind</em></div>
-      <div style="font-size:13px;color:var(--text3)">Guarda-roupa inteligente</div>
-    </div>
-    <div class="lbl" style="margin-top:0">API Key da Anthropic</div>
-    <div style="font-size:13px;color:var(--text3);margin-bottom:14px;line-height:1.7">Para usar o app você precisa de uma API key gratuita.<br><span style="color:var(--gold)">console.anthropic.com</span> → API Keys → Create Key</div>
-    <input type="password" class="field" id="gate-key-input" placeholder="sk-ant-api03-..." style="font-size:13px;padding:14px;letter-spacing:1px">
-    <div id="gate-key-error" style="font-size:12px;color:var(--red);margin-top:8px;display:none">API Key inválida. Verifique e tente novamente.</div>
-    <button class="cta" onclick="submitGateKey()" style="margin-top:14px">Entrar no StyleMind</button>
-    <div style="font-size:11px;color:var(--text3);text-align:center;margin-top:14px;line-height:1.6">A key fica salva só no seu iPhone.<br>Nunca é enviada para nenhum servidor além da Anthropic.</div>
-  </div>
-</div>
 </body>
 </html>
